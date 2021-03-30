@@ -74,7 +74,7 @@ public class RegistrationService {
             confirmationTokenRepository.save(confirmationToken);
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(customerRegister.getEmail());
-            message.setFrom("damineesaini11@gmail.com");
+            message.setFrom("damineesaini1111@gmail.com");
             message.setSubject("Complete Registration");
             message.setText("To confirm your account, please lick here:"+"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
             emailSendService.sendEmail(message);
@@ -108,7 +108,7 @@ public class RegistrationService {
             Role role = new Role();
             role.setAuthority("ROLE_SELLER");
             newUser.setRoles(new ArrayList<>(Arrays.asList(role)));
-            newSeller.setCompanyContactNo(sellerRegister.getContact());
+            newSeller.setCompanyContactNo(sellerRegister.getCompanyContactNo());
             newSeller.setCompanyName(sellerRegister.getCompanyName());
             newSeller.setGst(sellerRegister.getGst());
             sellerRepository.save(newSeller);
@@ -116,7 +116,7 @@ public class RegistrationService {
             confirmationTokenRepository.save(confirmationToken);
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(sellerRegister.getEmail());
-            message.setFrom("damineesaini11@gmail.com");
+            message.setFrom("damineesaini1111@gmail.com");
             message.setSubject("Complete Registration");
             message.setText("To confirm your account, please lick here:"+"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
             emailSendService.sendEmail(message);
@@ -137,7 +137,7 @@ public class RegistrationService {
 
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setTo(userExists.getEmail());
-                message.setFrom("damineesaini11@gmail.com");
+                message.setFrom("damineesaini1111@gmail.com");
                 message.setSubject("Complete Registration");
                 message.setText("To confirm your account, please lick here:"+"http://localhost:8080/confirm-account?token="+confirmationToken1.getConfirmationToken());
                 emailSendService.sendEmail(message);
@@ -173,7 +173,7 @@ public class RegistrationService {
 
                         SimpleMailMessage message = new SimpleMailMessage();
                         message.setTo(userExists.getEmail());
-                        message.setFrom("damineesaini11@gmail.com");
+                        message.setFrom("damineesaini1111@gmail.com");
                         message.setSubject("Complete Registration");
                         message.setText("To confirm your account, please lick here:"+"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
                         emailSendService.sendEmail(message);
@@ -190,7 +190,7 @@ public class RegistrationService {
 
                     SimpleMailMessage message = new SimpleMailMessage();
                     message.setTo(userExists.getEmail());
-                    message.setFrom("damineesaini11@gmail.com");
+                    message.setFrom("damineesaini1111@gmail.com");
                     message.setSubject("Complete Registration");
                     message.setText("To confirm your account, please lick here:"+"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
                     emailSendService.sendEmail(message);

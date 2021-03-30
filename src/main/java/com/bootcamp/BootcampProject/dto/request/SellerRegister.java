@@ -8,9 +8,8 @@ public class SellerRegister {
     private String password;
     private String confirmPassword;
     private String companyName;
-    private String companyContactNo;
+    private long companyContactNo;
     private String gst;
-    private long contact;
     private String city;
     private String state;
     private String country;
@@ -74,11 +73,11 @@ public class SellerRegister {
         this.companyName = companyName;
     }
 
-    public String getCompanyContactNo() {
+    public long getCompanyContactNo() {
         return companyContactNo;
     }
 
-    public void setCompanyContactNo(String companyContactNo) {
+    public void setCompanyContactNo(long companyContactNo) {
         this.companyContactNo = companyContactNo;
     }
 
@@ -90,13 +89,6 @@ public class SellerRegister {
         this.gst = gst;
     }
 
-    public long getContact() {
-        return contact;
-    }
-
-    public void setContact(long contact) {
-        this.contact = contact;
-    }
 
     public String getCity() {
         return city;

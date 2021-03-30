@@ -84,7 +84,7 @@ class BootcampProjectApplicationTests {
 		User user = new User();
 		user.setFirstName("Ankit");
 		user.setLastName("saini");
-		user.setEmail("ankitsaini@gmail.com");
+		user.setEmail("damineesaini7@gmail.com");
 		user.setPassword(bCryptPasswordEncoder.encode("9090"));
 		user.setActive(true);
 		ArrayList<Role> role = new ArrayList<>();
@@ -110,7 +110,7 @@ class BootcampProjectApplicationTests {
 		user.addAddresses(address);
 		user.setFirstName("Daminee");
 		user.setLastName("saini");
-		user.setEmail("damineesaini@gmail.com");
+		user.setEmail("damineesaini11@gmail.com");
 		user.setPassword(bCryptPasswordEncoder.encode("9090@ds#DL"));
 		ArrayList<Role> role = new ArrayList<>();
 		Role role1 = new Role();

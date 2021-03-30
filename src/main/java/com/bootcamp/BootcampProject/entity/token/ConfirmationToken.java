@@ -24,7 +24,7 @@ public class ConfirmationToken {
     @Temporal(TemporalType.TIMESTAMP)
     private Date expiryDate;
 
-    @OneToOne(targetEntity = User.class,fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = User.class,fetch = FetchType.EAGER,cascade=CascadeType.ALL)
     @JoinColumn(nullable = false,name = "id")
     private User user;
 
@@ -36,7 +36,7 @@ public class ConfirmationToken {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Timestamp(calendar.getTime().getTime()));
         createDate = new Date(calendar.getTime().getTime());
-        calendar.add(calendar.MINUTE,3);
+        calendar.add(calendar.MINUTE,15);
         expiryDate=new Date(calendar.getTime().getTime());
         confirmationToken = UUID.randomUUID().toString();
     }
