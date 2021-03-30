@@ -1,8 +1,10 @@
 package com.bootcamp.BootcampProject.entity.user;
 
+import antlr.BaseAST;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +21,7 @@ public class AppUserDetails implements UserDetails {
 
     public AppUserDetails(User byUsername){
         this.username = byUsername.getEmail();
+        BCryptPasswordEncoder bCryptPasswordEncoder;
         this.password=byUsername.getPassword();
         List<GrantedAuthority> auths = new ArrayList<>();
         for (Role role:byUsername.getRoles()) {

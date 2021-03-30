@@ -21,12 +21,8 @@ public class AppUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         try {
             if(userDaoService.loadUserByUsername(s)==null){
-                try {
-                    throw new UserNotFoundException("Invalid Username Entered");
-                } catch (UserNotFoundException e) {
-                    e.printStackTrace();
+                   throw new UsernameNotFoundException("Invalid Username Entered");
                 }
-            }
             else {
                 appUserDetails = userDaoService.loadUserByUsername(s);
             }

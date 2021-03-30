@@ -2,7 +2,6 @@ package com.bootcamp.BootcampProject.controller;
 
 import com.bootcamp.BootcampProject.entity.user.Customer;
 import com.bootcamp.BootcampProject.entity.user.Seller;
-import com.bootcamp.BootcampProject.entity.user.User;
 import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;

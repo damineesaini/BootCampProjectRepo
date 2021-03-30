@@ -5,13 +5,15 @@ import com.bootcamp.BootcampProject.repository.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 @SpringBootTest
 class BootcampProjectApplicationTests {
+
+	@Autowired
+	BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	@Autowired
 	UserRepository userRepository;
@@ -83,11 +85,11 @@ class BootcampProjectApplicationTests {
 		user.setFirstName("Ankit");
 		user.setLastName("saini");
 		user.setEmail("ankitsaini@gmail.com");
-		user.setPassword("9090");
+		user.setPassword(bCryptPasswordEncoder.encode("9090"));
 		user.setActive(true);
 		ArrayList<Role> role = new ArrayList<>();
 		Role role1 = new Role();
-		role1.setAuthority("ADMIN");
+		role1.setAuthority("ROLE_ADMIN");
 		role.add(role1);
 		user.setRoles(role);
 		userRepository.save(user);
@@ -109,7 +111,7 @@ class BootcampProjectApplicationTests {
 		user.setFirstName("Daminee");
 		user.setLastName("saini");
 		user.setEmail("damineesaini@gmail.com");
-		user.setPassword("9090@ds#DL");
+		user.setPassword(bCryptPasswordEncoder.encode("9090@ds#DL"));
 		ArrayList<Role> role = new ArrayList<>();
 		Role role1 = new Role();
 		role1.setAuthority("CUSTOMER");
@@ -137,7 +139,7 @@ class BootcampProjectApplicationTests {
 		user.setFirstName("Deepak");
 		user.setLastName("saini");
 		user.setEmail("deepaksaini@gmail.com");
-		user.setPassword("9090@ds");
+		user.setPassword(bCryptPasswordEncoder.encode("9090@ds"));
 		ArrayList<Role> role = new ArrayList<>();
 		Role role1 = new Role();
 		role1.setAuthority("SELLER");

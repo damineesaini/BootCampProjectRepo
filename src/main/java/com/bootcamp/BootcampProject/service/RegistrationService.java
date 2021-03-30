@@ -94,7 +94,7 @@ public class RegistrationService {
             newUser.setFirstName(sellerRegister.getFirstName());
             newUser.setMiddleName(sellerRegister.getMiddleName());
             newUser.setLastName(sellerRegister.getLastName());
-            newUser.setPassword(bCryptPasswordEncoder.encode(sellerRegister.getPassword()));
+            newUser.setPassword(sellerRegister.getPassword());
             Address address = new Address();
             address.setAddressLine(sellerRegister.getAddressLine());
             address.setCity(sellerRegister.getCity());

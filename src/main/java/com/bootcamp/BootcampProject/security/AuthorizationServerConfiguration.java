@@ -48,7 +48,6 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     public void configure(final AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints.tokenStore(tokenStore()).userDetailsService(userDetailsService)
                 .authenticationManager(authenticationManager);
-
     }
 
     @Bean
@@ -62,7 +61,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 .withClient("live-test")
                 .secret(passwordEncoder.encode("abcde"))
                 .authorizedGrantTypes("password","refresh_token")
-                .refreshTokenValiditySeconds(7*24 * 3600)
+                .refreshTokenValiditySeconds(30 * 24 * 3600)
                 .scopes("app")
                 .accessTokenValiditySeconds(7*24*60);
     }

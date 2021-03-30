@@ -3,7 +3,6 @@ package com.bootcamp.BootcampProject.controller;
 import com.bootcamp.BootcampProject.dto.request.SellerRegister;
 import com.bootcamp.BootcampProject.entity.user.Customer;
 import com.bootcamp.BootcampProject.entity.user.Seller;
-import com.bootcamp.BootcampProject.entity.user.User;
 import com.bootcamp.BootcampProject.exception.TokenExpiredException;
 import com.bootcamp.BootcampProject.exception.UserAlreadyExistException;
 import com.bootcamp.BootcampProject.dto.request.CustomerRegister;
@@ -27,7 +26,7 @@ public class RegistrationController {
     public List<Seller> allCustomer(){
         return registrationService.findAllCustomer();
     }
-    @PostMapping("/customer")
+    @PostMapping("/customer-register")
     public ResponseEntity<Object> registerCustomer(@RequestBody CustomerRegister customer) throws UserAlreadyExistException {
         Customer newCustomer = registrationService.createNewCustomer(customer);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(newCustomer.getUserId()).toUri();
@@ -41,11 +40,10 @@ public class RegistrationController {
 
     @PostMapping("/resend-activation-link")
     public String resendActivationLink(@RequestBody String email){
-        String message = registrationService.resendActivationToken(email);
-        return message;
+        return registrationService.resendActivationToken(email);
     }
 
-    @PostMapping("/seller")
+    @PostMapping("/seller-register")
     public ResponseEntity<Object> registerSeller(@RequestBody SellerRegister sellerRegister) throws UserAlreadyExistException {
             Seller newSeller = registrationService.createNewSeller(sellerRegister);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(newSeller.getUserId()).toUri();

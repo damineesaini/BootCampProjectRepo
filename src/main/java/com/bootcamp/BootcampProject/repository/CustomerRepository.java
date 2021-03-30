@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface CustomerRepository extends CrudRepository<Customer, UUID> {
+//    Customer findBy(User userid);
 }
