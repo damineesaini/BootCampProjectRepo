@@ -1,11 +1,11 @@
 package com.bootcamp.BootcampProject.controller;
 
+import com.bootcamp.BootcampProject.dto.request.SellerRegister;
 import com.bootcamp.BootcampProject.entity.user.Customer;
 import com.bootcamp.BootcampProject.entity.user.Seller;
 import com.bootcamp.BootcampProject.entity.user.User;
-//import com.bootcamp.BootcampProject.exception.UserAlreadyExistException;
-import com.bootcamp.BootcampProject.dto.request.CustomerRegister;
 import com.bootcamp.BootcampProject.exception.UserAlreadyExistException;
+import com.bootcamp.BootcampProject.dto.request.CustomerRegister;
 import com.bootcamp.BootcampProject.service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,14 +33,11 @@ public class RegistrationController {
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(newCustomer.getUserId()).toUri();
         return ResponseEntity.created(location).build();
     }
+
+    @PostMapping("/seller")
+    public ResponseEntity<Object> registerSeller(@RequestBody SellerRegister sellerRegister) throws UserAlreadyExistException {
+            Seller newSeller = registrationService.createNewSeller(sellerRegister);
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(newSeller.getUserId()).toUri();
+            return ResponseEntity.created(location).build();
+    }
 }
-//    @PostMapping("/seller")
-//    public ResponseEntity<Object> registerSeller(@RequestBody Seller seller) throws UserAlreadyExistException {
-//        User userExists = registrationService.findUserByEmail(seller.getEmail());
-//        if (userExists != null) throw new UserAlreadyExistException("User is already registered with the given email");
-//        else
-//        {Seller newSeller = registrationService.createNewSeller(seller);
-//            URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(newSeller.getId()).toUri();
-//            return ResponseEntity.created(location).build();}
-//    }
-//}
