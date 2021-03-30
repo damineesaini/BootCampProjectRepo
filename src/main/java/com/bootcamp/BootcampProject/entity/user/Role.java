@@ -1,5 +1,6 @@
 package com.bootcamp.BootcampProject.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ public class Role {
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
     private String authority;
+    @JsonBackReference
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
 

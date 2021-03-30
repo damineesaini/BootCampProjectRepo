@@ -4,6 +4,7 @@ import com.bootcamp.BootcampProject.dto.request.SellerRegister;
 import com.bootcamp.BootcampProject.entity.user.Customer;
 import com.bootcamp.BootcampProject.entity.user.Seller;
 import com.bootcamp.BootcampProject.entity.user.User;
+import com.bootcamp.BootcampProject.exception.TokenExpiredException;
 import com.bootcamp.BootcampProject.exception.UserAlreadyExistException;
 import com.bootcamp.BootcampProject.dto.request.CustomerRegister;
 import com.bootcamp.BootcampProject.service.RegistrationService;
@@ -23,15 +24,25 @@ public class RegistrationController {
     RegistrationService registrationService;
 
     @GetMapping
-    public List<Customer> getCustomer() {
+    public List<Seller> allCustomer(){
         return registrationService.findAllCustomer();
     }
-
     @PostMapping("/customer")
     public ResponseEntity<Object> registerCustomer(@RequestBody CustomerRegister customer) throws UserAlreadyExistException {
         Customer newCustomer = registrationService.createNewCustomer(customer);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(newCustomer.getUserId()).toUri();
         return ResponseEntity.created(location).build();
+    }
+
+    @PutMapping("/confirm-account")
+    public String confirmCustomerAccount(@RequestParam("token") String confirmationToken) throws TokenExpiredException {
+        return registrationService.confirmCustomerAccount(confirmationToken);
+    }
+
+    @PostMapping("/resend-activation-link")
+    public String resendActivationLink(@RequestBody String email){
+        String message = registrationService.resendActivationToken(email);
+        return message;
     }
 
     @PostMapping("/seller")

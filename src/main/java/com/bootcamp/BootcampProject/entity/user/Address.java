@@ -1,5 +1,6 @@
 package com.bootcamp.BootcampProject.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -20,6 +21,7 @@ public class Address {
     private String addressLine;
     private int zipcode;
     private String label;
+    @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="user_id")
     private User userId;

@@ -4,13 +4,10 @@ import com.bootcamp.BootcampProject.dto.request.SellerRegister;
 import com.bootcamp.BootcampProject.entity.token.ConfirmationToken;
 import com.bootcamp.BootcampProject.entity.user.*;
 import com.bootcamp.BootcampProject.dto.request.CustomerRegister;
-//import com.bootcamp.BootcampProject.exception.UserAlreadyExistException;
 import com.bootcamp.BootcampProject.exception.TokenExpiredException;
 import com.bootcamp.BootcampProject.exception.UserAlreadyExistException;
 import com.bootcamp.BootcampProject.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -41,6 +38,11 @@ public class RegistrationService {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public List<Seller> findAllCustomer() {
+        List<Seller> sellers = (List<Seller>) sellerRepository.findAll();
+        return sellers;
+    }
 
     public Customer createNewCustomer(CustomerRegister customerRegister) throws UserAlreadyExistException {
         User userExists = userRepository.findByEmail(customerRegister.getEmail());
@@ -79,10 +81,6 @@ public class RegistrationService {
             return newCustomer;
         }
 
-    }
-
-    public List<Customer> findAllCustomer() {
-        return (List<Customer>)customerRepository.findAll();
     }
 
     public Seller createNewSeller(SellerRegister sellerRegister) throws UserAlreadyExistException {
@@ -162,7 +160,7 @@ public class RegistrationService {
         if (userExists != null){
             if(!userExists.isActive()){
                 ConfirmationToken confirmationToken = null;
-                confirmationTokenRepository.findBYuSER(userExists);
+                confirmationTokenRepository.findByUser(userExists);
 
                 if (confirmationToken!=null){
                     String token = confirmationToken.getConfirmationToken();
