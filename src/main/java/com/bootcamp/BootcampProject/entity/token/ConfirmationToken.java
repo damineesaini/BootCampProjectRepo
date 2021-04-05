@@ -2,7 +2,6 @@ package com.bootcamp.BootcampProject.entity.token;
 
 import com.bootcamp.BootcampProject.entity.user.User;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -25,7 +24,7 @@ public class ConfirmationToken {
     private Date expiryDate;
 
     @OneToOne(targetEntity = User.class,fetch = FetchType.EAGER,cascade=CascadeType.ALL)
-    @JoinColumn(nullable = false,name = "id")
+    @JoinColumn(nullable = false,name = "user_id")
     private User user;
 
     public ConfirmationToken() {

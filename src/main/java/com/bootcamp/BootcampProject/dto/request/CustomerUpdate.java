@@ -1,10 +1,22 @@
 package com.bootcamp.BootcampProject.dto.request;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 public class CustomerUpdate {
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @NotNull
     private String firstName;
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
     private String middleName;
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @NotNull
     private String lastName;
+    @Email(message = "Email should be valid")
     private String email;
+    @Pattern(regexp = "^(\\\\+\\\\d{1,3}( )?)?((\\\\(\\\\d{1,3}\\\\))|\\\\d{1,3})[- .]?\\\\d{3,4}[- .]?\\\\d{4}$")
+    @NotNull
     private long contactNo;
 
     public CustomerUpdate(String firstName, String middleName, String lastName, String email, long contactNo) {

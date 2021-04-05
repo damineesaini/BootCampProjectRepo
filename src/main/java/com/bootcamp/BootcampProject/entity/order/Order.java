@@ -1,7 +1,6 @@
 package com.bootcamp.BootcampProject.entity.order;
 
 import com.bootcamp.BootcampProject.entity.user.Customer;
-
 import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;

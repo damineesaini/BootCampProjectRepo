@@ -1,6 +1,5 @@
 package com.bootcamp.BootcampProject.entity.user;
 
-import antlr.BaseAST;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

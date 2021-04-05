@@ -1,7 +1,6 @@
 package com.bootcamp.BootcampProject.entity.product;
 
 import com.bootcamp.BootcampProject.entity.user.Seller;
-
 import javax.persistence.*;
 import java.util.UUID;
 

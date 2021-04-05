@@ -1,7 +1,6 @@
 package com.bootcamp.BootcampProject.entity.order;
 
 import com.bootcamp.BootcampProject.entity.product.ProductVariation;
-
 import javax.persistence.*;
 import java.util.UUID;
 

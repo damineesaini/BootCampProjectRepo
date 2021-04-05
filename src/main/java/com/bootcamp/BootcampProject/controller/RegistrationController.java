@@ -1,5 +1,6 @@
 package com.bootcamp.BootcampProject.controller;
 
+import com.bootcamp.BootcampProject.dto.request.ResendToken;
 import com.bootcamp.BootcampProject.dto.request.SellerRegister;
 import com.bootcamp.BootcampProject.entity.user.Customer;
 import com.bootcamp.BootcampProject.entity.user.Seller;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class RegistrationController {
         return registrationService.findAllCustomer();
     }
     @PostMapping("/customer-register")
-    public ResponseEntity<Object> registerCustomer(@RequestBody CustomerRegister customer) throws UserAlreadyExistException {
+    public ResponseEntity<Object> registerCustomer(@Valid @RequestBody CustomerRegister customer) throws UserAlreadyExistException {
         Customer newCustomer = registrationService.createNewCustomer(customer);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(newCustomer.getUserId()).toUri();
         return ResponseEntity.created(location).build();
@@ -39,12 +41,12 @@ public class RegistrationController {
     }
 
     @PostMapping("/resend-activation-link")
-    public String resendActivationLink(@RequestBody String email){
+    public String resendActivationLink(@Valid @RequestBody ResendToken email){
         return registrationService.resendActivationToken(email);
     }
 
     @PostMapping("/seller-register")
-    public ResponseEntity<Object> registerSeller(@RequestBody SellerRegister sellerRegister) throws UserAlreadyExistException {
+    public ResponseEntity<Object> registerSeller(@Valid @RequestBody SellerRegister sellerRegister) throws UserAlreadyExistException {
             Seller newSeller = registrationService.createNewSeller(sellerRegister);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(newSeller.getUserId()).toUri();
             return ResponseEntity.created(location).build();

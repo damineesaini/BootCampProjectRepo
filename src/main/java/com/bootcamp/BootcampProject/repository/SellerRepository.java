@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface SellerRepository extends CrudRepository<Seller, UUID> {
-    Seller findBy(User user);
+    Seller findByUserId(User user);
 }

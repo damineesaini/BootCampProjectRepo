@@ -47,7 +47,7 @@ public class SellerService {
         AppUserDetails appUserDetails = (AppUserDetails) authentication.getPrincipal();
         String username= appUserDetails.getUsername();
         User user = userRepository.findByEmail(username);
-        return  sellerRepository.findBy(user);
+        return  sellerRepository.findByUserId(user);
     }
 
     public MappingJacksonValue getProfile(){
@@ -72,7 +72,7 @@ public class SellerService {
         Optional<User> user = userRepository.findById(id);
         if(user.isPresent()){
             User user1 = user.get();
-            Seller seller = sellerRepository.findBy(user1);
+            Seller seller = sellerRepository.findByUserId(user1);
             if (sellerUpdate.getFirstName()!=null){
                 user1.setFirstName(sellerUpdate.getFirstName());
             }

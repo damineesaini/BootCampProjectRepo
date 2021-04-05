@@ -12,9 +12,9 @@ import java.util.UUID;
 public interface ConfirmationTokenRepository extends CrudRepository<ConfirmationToken, UUID> {
     ConfirmationToken findByConfirmationToken(String confirmationToken);
 
-    @Modifying
-    @Query(value = "delete from confirmation_token_table where confirmation_token =: token",nativeQuery = true)
-    void deleteConfirmationToken(@Param("token")String token);
-
     ConfirmationToken findByUser(User user);
+
+    @Modifying
+    @Query(value = "delete from confirmation_token where confirmation_token =:token",nativeQuery = true)
+    void deleteConfirmationToken(@Param("token")String token);
 }

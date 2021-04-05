@@ -114,7 +114,7 @@ class BootcampProjectApplicationTests {
 		user.setPassword(bCryptPasswordEncoder.encode("9090@ds#DL"));
 		ArrayList<Role> role = new ArrayList<>();
 		Role role1 = new Role();
-		role1.setAuthority("CUSTOMER");
+		role1.setAuthority("ROLE_CUSTOMER");
 		role.add(role1);
 		user.setRoles(role);
 		customer.setUserId(user);
@@ -142,7 +142,7 @@ class BootcampProjectApplicationTests {
 		user.setPassword(bCryptPasswordEncoder.encode("9090@ds"));
 		ArrayList<Role> role = new ArrayList<>();
 		Role role1 = new Role();
-		role1.setAuthority("SELLER");
+		role1.setAuthority("ROLE_SELLER");
 		role.add(role1);
 		user.setRoles(role);
 		seller.setUserId(user);

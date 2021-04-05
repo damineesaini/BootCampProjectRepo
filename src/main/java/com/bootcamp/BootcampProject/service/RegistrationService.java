@@ -1,5 +1,6 @@
 package com.bootcamp.BootcampProject.service;
 
+import com.bootcamp.BootcampProject.dto.request.ResendToken;
 import com.bootcamp.BootcampProject.dto.request.SellerRegister;
 import com.bootcamp.BootcampProject.entity.token.ConfirmationToken;
 import com.bootcamp.BootcampProject.entity.user.*;
@@ -20,9 +21,6 @@ import java.util.*;
 public class RegistrationService {
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -69,6 +67,7 @@ public class RegistrationService {
             role.setAuthority("ROLE_CUSTOMER");
             newUser.setRoles(new ArrayList<>(Arrays.asList(role)));
             newCustomer.setContactNo(customerRegister.getContact());
+            newCustomer.setUserId(newUser);
             customerRepository.save(newCustomer);
             ConfirmationToken confirmationToken= new ConfirmationToken(newUser);
             confirmationTokenRepository.save(confirmationToken);
@@ -111,6 +110,7 @@ public class RegistrationService {
             newSeller.setCompanyContactNo(sellerRegister.getCompanyContactNo());
             newSeller.setCompanyName(sellerRegister.getCompanyName());
             newSeller.setGst(sellerRegister.getGst());
+            newSeller.setUserId(newUser);
             sellerRepository.save(newSeller);
             ConfirmationToken confirmationToken= new ConfirmationToken(newUser);
             confirmationTokenRepository.save(confirmationToken);
@@ -155,12 +155,13 @@ public class RegistrationService {
     }
 
     @Transactional
-    public String resendActivationToken(String email){
-        User userExists = userRepository.findByEmail(email);
+    public String resendActivationToken(ResendToken email){
+        System.out.println(email);
+        User userExists = userRepository.findByEmail(email.getEmail());
         if (userExists != null){
             if(!userExists.isActive()){
                 ConfirmationToken confirmationToken = null;
-                confirmationTokenRepository.findByUser(userExists);
+                confirmationToken = confirmationTokenRepository.findByUser(userExists);
 
                 if (confirmationToken!=null){
                     String token = confirmationToken.getConfirmationToken();

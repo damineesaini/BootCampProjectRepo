@@ -1,7 +1,6 @@
 package com.bootcamp.BootcampProject.entity.user;
 
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.util.UUID;
 

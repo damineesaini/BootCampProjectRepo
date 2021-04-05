@@ -1,11 +1,28 @@
 package com.bootcamp.BootcampProject.dto.request;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
+
 public class NewAddress {
+    @NotNull
+    @Pattern(regexp ="[A-Za-z0-9'\\.\\-\\s\\,]")
     private String addressLine;
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @NotNull
     private String city;
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @NotNull
     private String state;
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @NotNull
     private String country;
+    @Positive
+    @Size(min = 6,max = 6)
     private int zipcode;
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @NotNull
     private String label;
 
     public NewAddress(String addressLine, String city, String state, String country, int zipcode, String label) {

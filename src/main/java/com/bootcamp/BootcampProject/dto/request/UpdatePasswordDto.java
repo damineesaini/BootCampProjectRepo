@@ -1,8 +1,13 @@
 package com.bootcamp.BootcampProject.dto.request;
 
+import javax.validation.constraints.Pattern;
+
 public class UpdatePasswordDto {
+    @Pattern(regexp = "^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\\d]){1,})(?=(.*[\\W]){1,})(?!.*\\s).{8,}$")
     private String oldPassword;
+    @Pattern(regexp = "^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\\d]){1,})(?=(.*[\\W]){1,})(?!.*\\s).{8,}$")
     private String newPassword;
+    @Pattern(regexp = "^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\\d]){1,})(?=(.*[\\W]){1,})(?!.*\\s).{8,}$")
     private String confirmPassword;
 
     public String getOldPassword() {

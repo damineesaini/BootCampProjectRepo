@@ -1,20 +1,22 @@
 package com.bootcamp.BootcampProject.service;
 
-import com.bootcamp.BootcampProject.entity.user.Customer;
 import com.bootcamp.BootcampProject.entity.user.Seller;
 import com.bootcamp.BootcampProject.entity.user.User;
 import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.repository.CustomerRepository;
 import com.bootcamp.BootcampProject.repository.SellerRepository;
 import com.bootcamp.BootcampProject.repository.UserRepository;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.nio.ByteBuffer;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -31,17 +33,18 @@ public class AdminService {
     @Autowired
     private EmailSendService emailSendService;
 
+    public static byte[] getBytesFromUUID(UUID uuid) {
+        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+        bb.putLong(uuid.getMostSignificantBits());
+        bb.putLong(uuid.getLeastSignificantBits());
+
+        return bb.array();
+    }
+
     @Transactional
     public String activateUser(UUID userId) throws UserNotFoundException {
-        Optional<User> user;
-        try {
-            user = userRepository.findById(userId);
-        }catch (NullPointerException e){
-            throw new UsernameNotFoundException("Incorrect user Id");
-        }
-
-        if(!user.isPresent()){
-            User user1 =user.get();
+        if(userRepository.findById(userId).isPresent()){
+            User user1 =userRepository.findById(userId).get();
             if (!user1.isActive()){
                 user1.setActive(true);
                 userRepository.save(user1);
@@ -64,15 +67,8 @@ public class AdminService {
 
     @Transactional
     public String deactivateUser(UUID userId) throws UserNotFoundException {
-        Optional<User> user;
-        try {
-            user = userRepository.findById(userId);
-        }catch (NullPointerException e){
-            throw new UsernameNotFoundException("Incorrect user Id");
-        }
-
-        if(!user.isPresent()){
-            User user1 =user.get();
+        if(userRepository.findById(userId).isPresent()){
+            User user1 =userRepository.findById(userId).get();
             if (user1.isActive()){
                 user1.setActive(false);
                 userRepository.save(user1);
@@ -93,10 +89,17 @@ public class AdminService {
         }
     }
 
-    public List<Customer> findAllCustomer() {
-        List<Customer> customers = (List<Customer>) customerRepository.findAll();
-        return customers;
+    public MappingJacksonValue findAllCustomer() {
+//        List<Customer> customers = (List<Customer>) customerRepository.findAll();
+//        return customers;
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("firstName","lastName","isActive","contactNo");
+        FilterProvider filters = new SimpleFilterProvider().addFilter("userDynamicFilter",filter);
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(customerRepository.findAll());
+        mappingJacksonValue.setFilters(filters);
+        return mappingJacksonValue;
     }
+
+
 
     public List<Seller> findAllSeller() {
         List<Seller> sellers = (List<Seller>) sellerRepository.findAll();

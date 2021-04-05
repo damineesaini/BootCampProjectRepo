@@ -1,20 +1,48 @@
 package com.bootcamp.BootcampProject.dto.request;
 
+import javax.validation.constraints.*;
+
 public class SellerRegister {
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @NotNull
     private String firstName;
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
     private String middleName;
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @NotNull
     private String lastName;
+    @Email(message = "Email should be valid")
     private String email;
+    @Pattern(regexp = "^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\\d]){1,})(?=(.*[\\W]){1,})(?!.*\\s).{8,}$")
     private String password;
+    @Pattern(regexp = "^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\\d]){1,})(?=(.*[\\W]){1,})(?!.*\\s).{8,}$")
     private String confirmPassword;
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @NotNull
     private String companyName;
+    @Pattern(regexp = "^(\\\\+\\\\d{1,3}( )?)?((\\\\(\\\\d{1,3}\\\\))|\\\\d{1,3})[- .]?\\\\d{3,4}[- .]?\\\\d{4}$")
+    @NotNull
     private long companyContactNo;
+    @NotNull
+    @Pattern(regexp = "\\d{2}[A-Z]{5}\\d{4}[A-Z]{1}[A-Z\\d]{1}[Z]{1}[A-Z\\d]{1}")
     private String gst;
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @NotNull
     private String city;
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @NotNull
     private String state;
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @NotNull
     private String country;
+    @NotNull
+    @Pattern(regexp ="[A-Za-z0-9'\\.\\-\\s\\,]")
     private String addressLine;
+    @Positive
+    @Size(min = 6,max = 6)
     private int zipcode;
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @NotNull
     private String label;
 
     public String getFirstName() {

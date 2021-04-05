@@ -46,7 +46,7 @@ public class CustomerService {
         AppUserDetails appUserDetails = (AppUserDetails) authentication.getPrincipal();
         String username= appUserDetails.getUsername();
         User user = userRepository.findByEmail(username);
-        return  customerRepository.findBy(user);
+        return  customerRepository.findByUserId(user);
     }
 
     public MappingJacksonValue getProfile(){
@@ -71,7 +71,7 @@ public class CustomerService {
         Optional<User> user = userRepository.findById(id);
         if(user.isPresent()){
             User user1 = user.get();
-            Customer customer = customerRepository.findBy(user1);
+            Customer customer = customerRepository.findByUserId(user1);
             if (customerUpdate.getFirstName()!=null){
                 user1.setFirstName(customerUpdate.getFirstName());
             }

@@ -2,7 +2,6 @@ package com.bootcamp.BootcampProject.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.util.UUID;
 
