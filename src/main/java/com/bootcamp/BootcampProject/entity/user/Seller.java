@@ -17,7 +17,7 @@ public class Seller{
     private User userId;
     private String gst;
     @Column(name = "company_contact")
-    private long companyContactNo;
+    private String companyContactNo;
     @Column(name = "company_name")
     private String companyName;
 
@@ -29,11 +29,11 @@ public class Seller{
         this.userId = userId;
     }
 
-    public long getCompanyContactNo() {
+    public String getCompanyContactNo() {
         return companyContactNo;
     }
 
-    public void setCompanyContactNo(long companyContactNo) {
+    public void setCompanyContactNo(String companyContactNo) {
         this.companyContactNo = companyContactNo;
     }
 

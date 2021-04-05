@@ -1,23 +1,23 @@
 package com.bootcamp.BootcampProject.entity.product;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
-import java.util.*;
 import java.util.UUID;
 
 @Entity
 @Table(name = "category")
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
     private UUID id;
     private String name;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="parent_category_id")
     private Category parentCategoryId;
-
-    @OneToMany(mappedBy="parentCategoryId",cascade = CascadeType.ALL)
-    private Set<Category> childCategory = new HashSet<Category>();
 
     public UUID getId() {
         return id;
@@ -43,13 +43,6 @@ public class Category {
         this.parentCategoryId = parentCategoryId;
     }
 
-    public Set<Category> getChildCategory() {
-        return childCategory;
-    }
-
-    public void setChildCategory(Set<Category> childCategory) {
-        this.childCategory = childCategory;
-    }
 }
 
 

@@ -65,21 +65,6 @@ class BootcampProjectApplicationTests {
 	}
 
 	@Test
-	void createRolesTest(){
-		Role role1 =new Role();
-		role1.setAuthority("ADMIN");
-		roleRepository.save(role1);
-
-		Role role2= new Role();
-		role2.setAuthority("CUSTOMER");
-		roleRepository.save(role2);
-
-		Role role3= new Role();
-		role3.setAuthority("SELLER");
-		roleRepository.save(role3);
-	}
-
-	@Test
 	void createUserAdmin(){
 		User user = new User();
 		user.setFirstName("Ankit");
@@ -98,7 +83,7 @@ class BootcampProjectApplicationTests {
 	@Test
 	void createUserCustomer(){
 		Customer customer = new Customer();
-		customer.setContactNo(9711223011l);
+		customer.setContactNo("9711223011");
 		Address address = new Address();
 		User user = new User();
 		address.setAddressLine("hno 582");
@@ -124,7 +109,7 @@ class BootcampProjectApplicationTests {
 	@Test
 	void createUserSeller(){
 		Seller seller = new Seller();
-		seller.setCompanyContactNo(9711843254l);
+		seller.setCompanyContactNo("9711843254");
 		seller.setCompanyName("Indian Enterprises");
 		seller.setGst("ADCF12909287");
 		Address address = new Address();
@@ -138,7 +123,7 @@ class BootcampProjectApplicationTests {
 		user.addAddresses(address);
 		user.setFirstName("Deepak");
 		user.setLastName("saini");
-		user.setEmail("deepaksaini@gmail.com");
+		user.setEmail("alfaaz.contact@gmail.com");
 		user.setPassword(bCryptPasswordEncoder.encode("9090@ds"));
 		ArrayList<Role> role = new ArrayList<>();
 		Role role1 = new Role();

@@ -50,6 +50,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         http
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
+                .antMatchers("/category/*").permitAll()
                 .antMatchers("/register/*").permitAll()
                 .antMatchers("/login").permitAll()
 //                .antMatchers("/admin/*").permitAll()

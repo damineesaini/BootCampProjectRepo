@@ -1,6 +1,5 @@
 package com.bootcamp.BootcampProject.service;
 
-
 import com.bootcamp.BootcampProject.dto.request.NewAddress;
 import com.bootcamp.BootcampProject.dto.request.SellerUpdate;
 import com.bootcamp.BootcampProject.dto.request.UpdatePasswordDto;
@@ -24,7 +23,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -51,8 +49,9 @@ public class SellerService {
     }
 
     public MappingJacksonValue getProfile(){
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("firstName","lastName","isActive","contactNo");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("userDynamicFilter",filter);
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("firstName","lastName","email","addresses");
+        SimpleBeanPropertyFilter filter1 = SimpleBeanPropertyFilter.filterOutAllExcept("addressLine","city","state","country","zipcode");
+        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter",filter).addFilter("addressFilter",filter1);
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(getLoggedInSeller());
         mappingJacksonValue.setFilters(filters);
         return mappingJacksonValue;
@@ -60,7 +59,8 @@ public class SellerService {
 
     public MappingJacksonValue getAddress(){
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("addresses");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("userDynamicFilter",filter);
+        SimpleBeanPropertyFilter filter1 = SimpleBeanPropertyFilter.filterOutAllExcept("addressLine","city","state","country","zipcode");
+        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter",filter).addFilter("addressFilter",filter1);
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(getLoggedInSeller());
         mappingJacksonValue.setFilters(filters);
         return mappingJacksonValue;
@@ -69,9 +69,8 @@ public class SellerService {
     @Transactional
     @Modifying
     public String updateSellerProfile(SellerUpdate sellerUpdate, UUID id){
-        Optional<User> user = userRepository.findById(id);
-        if(user.isPresent()){
-            User user1 = user.get();
+        if(userRepository.findById(id).isPresent()){
+            User user1 = userRepository.findById(id).get();
             Seller seller = sellerRepository.findByUserId(user1);
             if (sellerUpdate.getFirstName()!=null){
                 user1.setFirstName(sellerUpdate.getFirstName());
@@ -82,10 +81,7 @@ public class SellerService {
             if(sellerUpdate.getLastName()!=null){
                 user1.setLastName(sellerUpdate.getLastName());
             }
-            if(sellerUpdate.getEmail()!=null){
-                user1.setEmail(sellerUpdate.getEmail());
-            }
-            if(sellerUpdate.getCompanyContactNo()!= 0l)
+            if(sellerUpdate.getCompanyContactNo()!= null)
                 seller.setCompanyContactNo(sellerUpdate.getCompanyContactNo());
 
             seller.setUserId(user1);
@@ -97,9 +93,8 @@ public class SellerService {
     @Transactional
     @Modifying
     public String updateAddress(NewAddress newAddress, UUID addressId, UUID id){
-        Optional<Address> address = addressRepository.findById(addressId);
-        if (address.isPresent()){
-            Address updatedAddress= address.get();
+        if (addressRepository.findById(addressId).isPresent()){
+            Address updatedAddress= addressRepository.findById(addressId).get();
 
             if (updatedAddress.getUserId().getId().equals(id)){
                 if (newAddress.getAddressLine()!=null){
@@ -125,28 +120,31 @@ public class SellerService {
         return "address updated successfully";
     }
 
-    public String updatePassword(UpdatePasswordDto updatePasswordDto , String username){
-        User user = userRepository.findByEmail(username);
+    public String updatePassword(UpdatePasswordDto updatePasswordDto , UUID id) {
+        if (userRepository.findById(id).isPresent()) {
+            User user = userRepository.findById(id).get();
 
-        String oldPassword = updatePasswordDto.getOldPassword();
+            String oldPassword = updatePasswordDto.getOldPassword();
 
-        if (bCryptPasswordEncoder.matches(oldPassword,user.getPassword())){
-            String newPassword = updatePasswordDto.getNewPassword();
-            String confirmPassword = updatePasswordDto.getConfirmPassword();
+            if (bCryptPasswordEncoder.matches(oldPassword, user.getPassword())) {
+                String newPassword = updatePasswordDto.getNewPassword();
+                String confirmPassword = updatePasswordDto.getConfirmPassword();
 
-            if (newPassword.equals(confirmPassword)){
-                String updatePassword=bCryptPasswordEncoder.encode(newPassword);
-                user.setPassword(updatePassword);
-                userRepository.save(user);
+                if (newPassword.equals(confirmPassword)) {
+                    String updatePassword = bCryptPasswordEncoder.encode(newPassword);
+                    user.setPassword(updatePassword);
+                    userRepository.save(user);
 
-                SimpleMailMessage message = new SimpleMailMessage();
-                message.setTo(user.getEmail());
-                message.setFrom("damineesaini1111@gmail.com");
-                message.setSubject("Password Updated!!");
-                message.setText("Your account password has been update.");
-                emailSendService.sendEmail(message);
+                    SimpleMailMessage message = new SimpleMailMessage();
+                    message.setTo(user.getEmail());
+                    message.setFrom("damineesaini1111@gmail.com");
+                    message.setSubject("Password Updated!!");
+                    message.setText("Your account password has been update.");
+                    emailSendService.sendEmail(message);
+                }
             }
+            return "password updated successfully!!";
         }
-        return "password updated successfully!!";
+        return "user not found";
     }
 }

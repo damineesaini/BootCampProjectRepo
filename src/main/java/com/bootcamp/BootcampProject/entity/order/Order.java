@@ -1,6 +1,8 @@
 package com.bootcamp.BootcampProject.entity.order;
 
 import com.bootcamp.BootcampProject.entity.user.Customer;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
@@ -9,9 +11,11 @@ import java.util.UUID;
 @Table(name = "order_details")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
     private UUID id;
-    @ManyToOne(optional = false)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="customer_user_id")
     private Customer customerId;
     @Column(name = "amount_paid")

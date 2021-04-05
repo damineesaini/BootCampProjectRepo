@@ -13,9 +13,9 @@ public class CustomerRegister {
     private String lastName;
     @Email(message = "Email should be valid")
     private String email;
-    @Pattern(regexp = "^(\\\\+\\\\d{1,3}( )?)?((\\\\(\\\\d{1,3}\\\\))|\\\\d{1,3})[- .]?\\\\d{3,4}[- .]?\\\\d{4}$")
+    @Pattern(regexp = "(0/91)?[7-9][0-9]{9}")
     @NotNull
-    private long contact;
+    private String contact;
     @Pattern(regexp = "^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\\d]){1,})(?=(.*[\\W]){1,})(?!.*\\s).{8,}$")
     private String password;
     @Pattern(regexp = "^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\\d]){1,})(?=(.*[\\W]){1,})(?!.*\\s).{8,}$")
@@ -33,27 +33,12 @@ public class CustomerRegister {
     @Pattern(regexp ="[A-Za-z0-9'\\.\\-\\s\\,]")
     private String addressLine;
     @Positive
-    @Size(min = 6,max = 6)
+    @Min(100000)
+    @Max(999999)
     private int zipcode;
     @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
     @NotNull
     private String label;
-
-    public CustomerRegister(String firstName, String middleName, String lastName, String email, long contact, String password, String confirmPassword, String city, String state, String country, String addressLine, int zipcode, String label) {
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.lastName = lastName;
-        this.email = email;
-        this.contact = contact;
-        this.password = password;
-        this.confirmPassword = confirmPassword;
-        this.city = city;
-        this.state = state;
-        this.country = country;
-        this.addressLine = addressLine;
-        this.zipcode = zipcode;
-        this.label = label;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -87,11 +72,11 @@ public class CustomerRegister {
         this.email = email;
     }
 
-    public long getContact() {
+    public String getContact() {
         return contact;
     }
 
-    public void setContact(long contact) {
+    public void setContact(String contact) {
         this.contact = contact;
     }
 

@@ -4,16 +4,17 @@ import com.bootcamp.BootcampProject.dto.request.NewAddress;
 import com.bootcamp.BootcampProject.dto.request.SellerUpdate;
 import com.bootcamp.BootcampProject.dto.request.UpdatePasswordDto;
 import com.bootcamp.BootcampProject.entity.user.Seller;
+import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.service.SellerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
@@ -27,21 +28,21 @@ public class SellerController {
     private TokenStore tokenStore;
 
     @GetMapping("/profile")
-    public Seller sellerProfile(){
-        Seller seller =sellerService.getLoggedInSeller();
+    public MappingJacksonValue sellerProfile(){
+        MappingJacksonValue seller =sellerService.getProfile();
         return seller;
     }
 
     @PutMapping("/update-profile")
-    public String updateProfile(@RequestBody SellerUpdate sellerUpdate, HttpServletResponse response){
+    public String updateProfile(@Valid @RequestBody SellerUpdate sellerUpdate, HttpServletResponse response){
         Seller seller = sellerService.getLoggedInSeller();
         UUID id =seller.getUserId().getId();
         String message = sellerService.updateSellerProfile(sellerUpdate,id);
         return message;
     }
 
-    @PutMapping("/update-address")
-    public String updateAddress(@RequestBody NewAddress newAddress,@PathVariable String addressId, HttpServletResponse response){
+    @PutMapping("/update-address/{addressId}")
+    public String updateAddress(@Valid @RequestBody NewAddress newAddress,@PathVariable String addressId, HttpServletResponse response){
         UUID addressid = UUID.fromString(addressId);
         Seller seller = sellerService.getLoggedInSeller();
         UUID id =seller.getUserId().getId();
@@ -52,18 +53,23 @@ public class SellerController {
     @PutMapping("/update-password")
     public String updateAddress(@RequestBody UpdatePasswordDto updatePasswordDto){
         Seller seller = sellerService.getLoggedInSeller();
-        String email =seller.getUserId().getEmail();
-        String message = sellerService.updatePassword(updatePasswordDto,email);
+        UUID id =seller.getUserId().getId();
+        String message = sellerService.updatePassword(updatePasswordDto,id);
         return message;
     }
 
     @GetMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null){
-            new SecurityContextLogoutHandler().logout(request, response, auth);
+    public String logout(HttpServletRequest request) throws UserNotFoundException {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null) {
+            try {
+                String tokenValue = authHeader.replace("bearer", "").trim();
+                OAuth2AccessToken accessToken = tokenStore.readAccessToken(tokenValue);
+                tokenStore.removeAccessToken(accessToken);
+            } catch (Exception e) {
+                throw new UserNotFoundException("user not found");
+            }
         }
-        SecurityContextHolder.getContext().setAuthentication(null);
         return "Logged out successfully";
     }
 

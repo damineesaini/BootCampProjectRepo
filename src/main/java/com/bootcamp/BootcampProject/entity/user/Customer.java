@@ -15,7 +15,7 @@ public class Customer{
     @OneToOne(targetEntity = User.class,cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User userId;
-    private long contactNo;
+    private String contactNo;
 
     public User getUserId() {
         return userId;
@@ -25,11 +25,11 @@ public class Customer{
         this.userId = userId;
     }
 
-    public long getContactNo() {
+    public String getContactNo() {
         return contactNo;
     }
 
-    public void setContactNo(long contactNo) {
+    public void setContactNo(String contactNo) {
         this.contactNo = contactNo;
     }
 

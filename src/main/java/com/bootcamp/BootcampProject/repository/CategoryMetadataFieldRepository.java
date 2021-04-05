@@ -7,4 +7,5 @@ import java.util.UUID;
 
 @Repository
 public interface CategoryMetadataFieldRepository extends CrudRepository<CategoryMetadataField, UUID> {
+    CategoryMetadataField findByName(String name);
 }

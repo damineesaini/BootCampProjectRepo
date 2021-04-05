@@ -1,6 +1,5 @@
 package com.bootcamp.BootcampProject.dto.request;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -13,14 +12,12 @@ public class SellerUpdate {
     @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
     @NotNull
     private String lastName;
-    @Email(message = "Email should be valid")
-    private String email;
     @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
     @NotNull
     private String companyName;
-    @Pattern(regexp = "^(\\\\+\\\\d{1,3}( )?)?((\\\\(\\\\d{1,3}\\\\))|\\\\d{1,3})[- .]?\\\\d{3,4}[- .]?\\\\d{4}$")
+    @Pattern(regexp = "(0/91)?[7-9][0-9]{9}")
     @NotNull
-    private long companyContactNo;
+    private String companyContactNo;
     @NotNull
     @Pattern(regexp = "\\d{2}[A-Z]{5}\\d{4}[A-Z]{1}[A-Z\\d]{1}[Z]{1}[A-Z\\d]{1}")
     private String gst;
@@ -49,14 +46,6 @@ public class SellerUpdate {
         this.lastName = lastName;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getCompanyName() {
         return companyName;
     }
@@ -65,11 +54,11 @@ public class SellerUpdate {
         this.companyName = companyName;
     }
 
-    public long getCompanyContactNo() {
+    public String getCompanyContactNo() {
         return companyContactNo;
     }
 
-    public void setCompanyContactNo(long companyContactNo) {
+    public void setCompanyContactNo(String companyContactNo) {
         this.companyContactNo = companyContactNo;
     }
 

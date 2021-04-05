@@ -13,17 +13,14 @@ public class CustomerUpdate {
     @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
     @NotNull
     private String lastName;
-    @Email(message = "Email should be valid")
-    private String email;
-    @Pattern(regexp = "^(\\\\+\\\\d{1,3}( )?)?((\\\\(\\\\d{1,3}\\\\))|\\\\d{1,3})[- .]?\\\\d{3,4}[- .]?\\\\d{4}$")
+    @Pattern(regexp = "(0/91)?[7-9][0-9]{9}")
     @NotNull
-    private long contactNo;
+    private String contactNo;
 
-    public CustomerUpdate(String firstName, String middleName, String lastName, String email, long contactNo) {
+    public CustomerUpdate(String firstName, String middleName, String lastName, String contactNo) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
-        this.email = email;
         this.contactNo = contactNo;
     }
 
@@ -51,19 +48,11 @@ public class CustomerUpdate {
         this.lastName = lastName;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public long getContactNo() {
+    public String getContactNo() {
         return contactNo;
     }
 
-    public void setContactNo(long contactNo) {
+    public void setContactNo(String contactNo) {
         this.contactNo = contactNo;
     }
 }

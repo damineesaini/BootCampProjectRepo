@@ -3,23 +3,23 @@ package com.bootcamp.BootcampProject.controller;
 import com.bootcamp.BootcampProject.dto.request.CustomerUpdate;
 import com.bootcamp.BootcampProject.dto.request.NewAddress;
 import com.bootcamp.BootcampProject.dto.request.UpdatePasswordDto;
+import com.bootcamp.BootcampProject.entity.user.Address;
 import com.bootcamp.BootcampProject.entity.user.Customer;
+import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/customer")
 public class CustomerController {
 
     @Autowired
@@ -34,8 +34,8 @@ public class CustomerController {
     }
 
     @GetMapping("/addresses")
-    public MappingJacksonValue customerAddress(){
-        return  customerService.getAddress();
+    public Set<Address> customerAddress() throws UserNotFoundException {
+        return (Set<Address>) customerService.getAddress();
     }
 
     @PutMapping("/update-profile")
@@ -54,7 +54,7 @@ public class CustomerController {
         return message;
     }
 
-    @DeleteMapping("/delete-address")
+    @DeleteMapping("/delete-address/{addressId}")
     public String deleteAddress(@PathVariable String addressId,HttpServletResponse response){
         UUID addressid = UUID.fromString(addressId);
         Customer customer = customerService.getLoggedInCustomer();
@@ -63,8 +63,8 @@ public class CustomerController {
         return message;
     }
 
-    @PutMapping("/update-address")
-    public String updateAddress(@RequestBody NewAddress newAddress, @PathVariable String addressId, HttpServletResponse response){
+    @PutMapping("/update-address/{addressId}")
+    public String updateAddress(@Valid @RequestBody NewAddress newAddress, @PathVariable String addressId, HttpServletResponse response){
         UUID addressid = UUID.fromString(addressId);
         Customer customer = customerService.getLoggedInCustomer();
         UUID id =customer.getUserId().getId();
@@ -73,20 +73,25 @@ public class CustomerController {
     }
 
     @PutMapping("/update-password")
-    public String updateAddress(@RequestBody UpdatePasswordDto updatePasswordDto){
+    public String updateAddress(@Valid @RequestBody UpdatePasswordDto updatePasswordDto){
         Customer customer = customerService.getLoggedInCustomer();
-        String email =customer.getUserId().getEmail();
-        String message = customerService.updatePassword(updatePasswordDto,email);
+        UUID id =customer.getUserId().getId();
+        String message = customerService.updatePassword(updatePasswordDto,id);
         return message;
     }
 
     @GetMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null){
-            new SecurityContextLogoutHandler().logout(request, response, auth);
+    public String logout(HttpServletRequest request) throws UserNotFoundException {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null) {
+            try {
+                String tokenValue = authHeader.replace("bearer", "").trim();
+                OAuth2AccessToken accessToken = tokenStore.readAccessToken(tokenValue);
+                tokenStore.removeAccessToken(accessToken);
+            } catch (Exception e) {
+                throw new UserNotFoundException("user not found");
+            }
         }
-        SecurityContextHolder.getContext().setAuthentication(null);
         return "Logged out successfully";
     }
 

@@ -1,5 +1,6 @@
 package com.bootcamp.BootcampProject.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -9,6 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "user")
+@JsonFilter("userFilter")
 public class User{
     @Id
     @GeneratedValue(generator = "uuid2")

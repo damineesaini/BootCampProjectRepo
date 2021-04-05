@@ -1,5 +1,7 @@
 package com.bootcamp.BootcampProject.entity.product;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.util.UUID;
 
@@ -7,7 +9,9 @@ import java.util.UUID;
 @Table(name = "category_metadata_field_value")
 public class CategoryMetadataFieldValues {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
     private UUID id;
     @OneToOne(targetEntity = CategoryMetadataField.class,cascade = CascadeType.ALL)
     @JoinColumn(name = "category_metadata_field_id")

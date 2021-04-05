@@ -1,6 +1,8 @@
 package com.bootcamp.BootcampProject.entity.product;
 
 import com.bootcamp.BootcampProject.entity.user.Seller;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.util.UUID;
 
@@ -8,15 +10,17 @@ import java.util.UUID;
 @Table(name = "product")
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
     private UUID id;
-    @ManyToOne(optional = false)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="seller_user_id")
     private Seller sellerUserId;
     private String name;
     @Column(name = "product_description")
     private String description;
-    @ManyToOne(optional = false)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="category_id")
     private Category categoryId;
     @Column(name = "is_cancellable")

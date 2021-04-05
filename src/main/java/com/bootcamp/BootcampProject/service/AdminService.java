@@ -33,13 +33,6 @@ public class AdminService {
     @Autowired
     private EmailSendService emailSendService;
 
-    public static byte[] getBytesFromUUID(UUID uuid) {
-        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
-        bb.putLong(uuid.getMostSignificantBits());
-        bb.putLong(uuid.getLeastSignificantBits());
-
-        return bb.array();
-    }
 
     @Transactional
     public String activateUser(UUID userId) throws UserNotFoundException {

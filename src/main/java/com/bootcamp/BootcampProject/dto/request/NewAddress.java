@@ -1,16 +1,13 @@
 package com.bootcamp.BootcampProject.dto.request;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 public class NewAddress {
-    @NotNull
-    @Pattern(regexp ="[A-Za-z0-9'\\.\\-\\s\\,]")
+    @NotNull(message = "address line cannot be null")
+    @Pattern(regexp ="^(\\w*\\s*[\\#\\-\\,\\/\\.\\(\\)\\&]*)+",message = "Invalid format for address line")
     private String addressLine;
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
     @NotNull
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*",message = "invalid city name")
     private String city;
     @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
     @NotNull
@@ -19,7 +16,8 @@ public class NewAddress {
     @NotNull
     private String country;
     @Positive
-    @Size(min = 6,max = 6)
+    @Min(100000)
+    @Max(999999)
     private int zipcode;
     @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
     @NotNull

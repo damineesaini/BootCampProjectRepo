@@ -20,9 +20,9 @@ public class SellerRegister {
     @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
     @NotNull
     private String companyName;
-    @Pattern(regexp = "^(\\\\+\\\\d{1,3}( )?)?((\\\\(\\\\d{1,3}\\\\))|\\\\d{1,3})[- .]?\\\\d{3,4}[- .]?\\\\d{4}$")
+    @Pattern(regexp = "(0/91)?[7-9][0-9]{9}")
     @NotNull
-    private long companyContactNo;
+    private String companyContactNo;
     @NotNull
     @Pattern(regexp = "\\d{2}[A-Z]{5}\\d{4}[A-Z]{1}[A-Z\\d]{1}[Z]{1}[A-Z\\d]{1}")
     private String gst;
@@ -39,7 +39,8 @@ public class SellerRegister {
     @Pattern(regexp ="[A-Za-z0-9'\\.\\-\\s\\,]")
     private String addressLine;
     @Positive
-    @Size(min = 6,max = 6)
+    @Min(100000)
+    @Max(999999)
     private int zipcode;
     @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
     @NotNull
@@ -101,11 +102,11 @@ public class SellerRegister {
         this.companyName = companyName;
     }
 
-    public long getCompanyContactNo() {
+    public String getCompanyContactNo() {
         return companyContactNo;
     }
 
-    public void setCompanyContactNo(long companyContactNo) {
+    public void setCompanyContactNo(String companyContactNo) {
         this.companyContactNo = companyContactNo;
     }
 
