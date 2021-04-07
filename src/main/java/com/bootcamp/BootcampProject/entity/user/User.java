@@ -1,5 +1,6 @@
 package com.bootcamp.BootcampProject.entity.user;
 
+import com.bootcamp.BootcampProject.entity.image.Image;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -31,7 +32,9 @@ public class User{
     @Column(name = "is_active")
     private boolean isActive;
     private boolean isLocked;
-    private long profileImage;
+    @JsonManagedReference
+    @OneToOne(cascade = CascadeType.ALL)
+    private Image profileImage;
     @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
@@ -155,11 +158,11 @@ public class User{
         isLocked = locked;
     }
 
-    public long getProfileImage() {
+    public Image getProfileImage() {
         return profileImage;
     }
 
-    public void setProfileImage(long profileImage) {
+    public void setProfileImage(Image profileImage) {
         this.profileImage = profileImage;
     }
 

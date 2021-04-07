@@ -1,5 +1,6 @@
 package com.bootcamp.BootcampProject.entity.product;
 
+import com.bootcamp.BootcampProject.entity.image.Image;
 import com.bootcamp.BootcampProject.entity.user.Seller;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -35,6 +36,8 @@ public class Product {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name="product_id")
     private Set<ProductVariation> productVariationId;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Image productImage;
 
     public UUID getId() {
         return id;
@@ -122,6 +125,14 @@ public class Product {
 
     public void setDelete(boolean delete) {
         isDelete = delete;
+    }
+
+    public Image getProductImage() {
+        return productImage;
+    }
+
+    public void setProductImage(Image productImage) {
+        this.productImage = productImage;
     }
 }
 

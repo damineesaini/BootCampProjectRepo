@@ -1,6 +1,7 @@
 package com.bootcamp.BootcampProject.entity.image;
 
 import com.bootcamp.BootcampProject.entity.user.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -18,11 +19,18 @@ public class Image {
     private String path;
     private boolean status;
     private String fileType;
-    @OneToOne
+    @JsonBackReference
+    @OneToOne(cascade = CascadeType.ALL)
     private User userId;
     private Date createDate;
     @Lob
     private  byte[] data;
+
+    public Image(String originalFilename, String contentType, byte[] bytes) {
+        this.filename=originalFilename;
+        this.fileType=contentType;
+        this.data=bytes;
+    }
 
     public UUID getId() {
         return id;

@@ -20,7 +20,12 @@ public class UserDaoService {
         if(user!=null){
             if(username!=null){
                 if(user.isActive()){
-                    return new AppUserDetails(user);
+                    if (!user.isLocked()){
+                        return new AppUserDetails(user);
+                    }
+                    else {
+                        throw new Exception("Account is locked");
+                    }
                 }
                 else{
                     throw new Exception("Account is not activated");
