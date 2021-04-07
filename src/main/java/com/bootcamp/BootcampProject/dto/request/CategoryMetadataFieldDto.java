@@ -1,10 +1,8 @@
 package com.bootcamp.BootcampProject.dto.request;
 
-import java.util.Set;
-
 public class CategoryMetadataFieldDto {
     private String name;
-    private Set<String> values;
+//    private Set<String> values;
 
     public String getName() {
         return name;
@@ -14,11 +12,11 @@ public class CategoryMetadataFieldDto {
         this.name = name;
     }
 
-    public Set<String> getValues() {
-        return values;
-    }
-
-    public void setValues(Set<String> values) {
-        this.values = values;
-    }
+//    public Set<String> getValues() {
+//        return values;
+//    }
+//
+//    public void setValues(Set<String> values) {
+//        this.values = values;
+//    }
 }

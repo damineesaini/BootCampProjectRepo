@@ -16,6 +16,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,6 +40,54 @@ public class ProductService {
         return (List<Product>) productRepository.findAll();
     }
 
+    public String saveProd(ProductRequestParams productRequestParams,Category category,Seller seller,User user){
+        Product newProduct = new Product();
+        newProduct.setName(productRequestParams.getName());
+        newProduct.setBrand(productRequestParams.getBrand());
+        newProduct.setDescription(productRequestParams.getDescription());
+        newProduct.setCancellable(productRequestParams.isCancellable());
+        newProduct.setCategoryId(category);
+        newProduct.setReturnable(productRequestParams.isReturnable());
+        newProduct.setActive(false);
+        newProduct.setSellerUserId(seller);
+        productRepository.save(newProduct);
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(user.getEmail());
+        message.setFrom("damineesaini1111@gmail.com");
+        message.setSubject("Product Inactive");
+        message.setText("Your product has been added but is waiting to be activated by the admin. the details of the product are:" + newProduct);
+        emailSendService.sendEmail(message);
+        return "Product Added Successfully";
+    }
+
+    public String createProduct(ProductRequestParams productRequestParams, Seller seller) throws Exception {
+        User user = userRepository.findById(seller.getUserId().getId()).get();
+        boolean isNameExist = productRepository.findByName(productRequestParams.getName()).isPresent();
+        if (isNameExist){
+            Product product = productRepository.findByName(productRequestParams.getName()).get();
+            if (product.getCategoryId().getName().equals(productRequestParams.getCategory()) && product.getBrand().equals(productRequestParams.getBrand())) {
+                return "Product already exists";
+            }
+            else{
+                return saveProd(productRequestParams,product.getCategoryId(),seller,user);
+            }
+        }
+        else {
+            if (categoryRepository.findByName(productRequestParams.getCategory()) != null) {
+                Category category = categoryRepository.findByName(productRequestParams.getCategory());
+                if (!category.isHasChild()) {
+                    return saveProd(productRequestParams, category, seller, user);
+                }
+                else {
+                    throw new Exception("Category is a parent category");
+                }
+            }
+            else {
+                throw new Exception("Category is invalid");
+            }
+        }
+    }
+
     public String addNewProduct(ProductRequestParams productRequestParams, Seller seller) throws Exception, UserNotFoundException {
         UUID id =seller.getUserId().getId();
         Category category;
@@ -49,67 +98,30 @@ public class ProductService {
                 if (existProduct.getCategoryId().getName().equals(productRequestParams.getCategory())) {
                     if (user.equals(existProduct.getSellerUserId()) && existProduct.getBrand().equals(productRequestParams.getBrand())) {
                         return "Product already exist";
-                    } else {
-                        Product newProduct = new Product();
-                        newProduct.setName(productRequestParams.getName());
-                        newProduct.setBrand(productRequestParams.getBrand());
-                        newProduct.setDescription(productRequestParams.getDescription());
-                        newProduct.setCancellable(productRequestParams.isCancellable());
-                        newProduct.setCategoryId(existProduct.getCategoryId());
-                        newProduct.setReturnable(productRequestParams.isReturnable());
-                        newProduct.setActive(false);
-                        newProduct.setSellerUserId(seller);
-                        productRepository.save(newProduct);
-                        return "Product Added Successfully";
                     }
-                } else {
+                    else {
+                       return saveProd(productRequestParams,existProduct.getCategoryId(),seller,user);
+                    }
+                }
+                else {
                     if (categoryRepository.findByName(productRequestParams.getCategory()) != null) {
                         category = categoryRepository.findByName(productRequestParams.getCategory());
                         if (category.getParentCategoryId() != null) {
-                            Product newProduct = new Product();
-                            newProduct.setName(productRequestParams.getName());
-                            newProduct.setBrand(productRequestParams.getBrand());
-                            newProduct.setDescription(productRequestParams.getDescription());
-                            newProduct.setCancellable(productRequestParams.isCancellable());
-                            newProduct.setCategoryId(category);
-                            newProduct.setReturnable(productRequestParams.isReturnable());
-                            newProduct.setActive(false);
-                            newProduct.setSellerUserId(seller);
-                            productRepository.save(newProduct);
-                            SimpleMailMessage message = new SimpleMailMessage();
-                            message.setTo(user.getEmail());
-                            message.setFrom("damineesaini1111@gmail.com");
-                            message.setSubject("Product Inactive");
-                            message.setText("Your product has been added but is waiting to be activated by the admin. the details of the product are:" + newProduct);
-                            emailSendService.sendEmail(message);
-                            return "Product Added Successfully";
-                        } else {
+                            return saveProd(productRequestParams,category,seller,user);
+                        }
+                        else {
                             throw new Exception("Category is a parent category");
                         }
-                    } else {
+                    }
+                    else {
                             throw new Exception("Category is invalid");
                     }
                 }
-            } else {
+            }
+            else {
                 if (categoryRepository.findByName(productRequestParams.getCategory()) != null) {
                     category = categoryRepository.findByName(productRequestParams.getCategory());
-                    Product newProduct = new Product();
-                    newProduct.setName(productRequestParams.getName());
-                    newProduct.setBrand(productRequestParams.getBrand());
-                    newProduct.setDescription(productRequestParams.getDescription());
-                    newProduct.setCancellable(productRequestParams.isCancellable());
-                    newProduct.setCategoryId(category);
-                    newProduct.setReturnable(productRequestParams.isReturnable());
-                    newProduct.setActive(false);
-                    newProduct.setSellerUserId(seller);
-                    productRepository.save(newProduct);
-                    SimpleMailMessage message = new SimpleMailMessage();
-                    message.setTo(user.getEmail());
-                    message.setFrom("damineesaini1111@gmail.com");
-                    message.setSubject("Product Inactive");
-                    message.setText("Your product has been added but is waiting to be activated by the admin. the details of the product are:"+newProduct);
-                    emailSendService.sendEmail(message);
-                    return "Product Added Successfully";
+                    return saveProd(productRequestParams,category,seller,user);
                 } else {
                     throw new Exception("Category does not exist");
                 }
@@ -251,4 +263,27 @@ public class ProductService {
         }
     }
 
+    public List<Product> getAllProductByCategory(UUID categoryId) throws Exception {
+        List<Product> validProducts = new ArrayList<>();
+      if (categoryRepository.findById(categoryId).isPresent()){
+          Category category = categoryRepository.findById(categoryId).get();
+          if (!category.isHasChild()){
+              List<Product> products = productRepository.findAllByCategoryId(category);
+              for (Product product: products) {
+                  if (product.isActive() && !product.isDelete()){
+                      if (product.getProductVariationId()!=null){
+                          validProducts.add(product);
+                      }
+                  }
+              }
+              return validProducts;
+          }
+          else {
+              throw new Exception("category has child. please specify a particular child category");
+          }
+      }
+      else {
+          throw new Exception("category does not exist.Invalid category id passed");
+      }
+    }
 }

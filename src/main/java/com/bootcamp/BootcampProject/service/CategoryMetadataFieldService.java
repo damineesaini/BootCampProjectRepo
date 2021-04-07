@@ -1,6 +1,5 @@
 package com.bootcamp.BootcampProject.service;
 
-import com.bootcamp.BootcampProject.dto.request.CategoryMetadataFieldDto;
 import com.bootcamp.BootcampProject.dto.request.CategoryMetadataFieldValueDto;
 import com.bootcamp.BootcampProject.entity.product.Category;
 import com.bootcamp.BootcampProject.entity.product.CategoryMetadataField;
@@ -40,7 +39,7 @@ public class CategoryMetadataFieldService {
         }
     }
 
-    private String toCommaSeperatedString(Set<String> value) {
+    private String toCommaSeperatedString(List<String> value) {
         String values = "";
         if (value.isEmpty()) return values;
         else {
@@ -74,9 +73,8 @@ public class CategoryMetadataFieldService {
             Category category = categoryRepository.findById(id).get();
             CategoryMetadataField categoryMetadataField= categoryMetadataFieldRepository.findById(mtaId).get();
             CategoryMetadataFieldValues categoryMetadataFieldValues = new CategoryMetadataFieldValues();
-
-            for (CategoryMetadataFieldDto value:categoryMetadataFieldValueDto.getFieldValues()) {
-                    String values = toCommaSeperatedString(value.getValues());
+            {
+                    String values = toCommaSeperatedString(categoryMetadataFieldValueDto.getFieldValues());
                     categoryMetadataFieldValues.setCategoryId(category);
                     categoryMetadataFieldValues.setValues(values);
                     categoryMetadataFieldValues.setCategoryMetadataFieldId(categoryMetadataField);

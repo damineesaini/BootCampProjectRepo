@@ -36,8 +36,7 @@ public class Product {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name="product_id")
     private Set<ProductVariation> productVariationId;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Image productImage;
+
 
     public UUID getId() {
         return id;
@@ -127,13 +126,7 @@ public class Product {
         isDelete = delete;
     }
 
-    public Image getProductImage() {
-        return productImage;
-    }
 
-    public void setProductImage(Image productImage) {
-        this.productImage = productImage;
-    }
 }
 
 /*

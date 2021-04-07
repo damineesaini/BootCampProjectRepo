@@ -1,5 +1,6 @@
 package com.bootcamp.BootcampProject.entity.product;
 
+import com.bootcamp.BootcampProject.entity.image.Image;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -19,10 +20,13 @@ public class ProductVariation {
     @Column(name = "quantity_available")
     private int quantityAvailable;
     private double price;
-    @Column(name = "product_metadata")
+    @Column(name = "product_metadata",columnDefinition = "JSON")
     private String productMetadata;
     @Column(name = "is_active")
     private boolean isActive;
+    private boolean isDeleted;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Image productImage;
 
     public UUID getId() {
         return id;
@@ -70,6 +74,14 @@ public class ProductVariation {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public Image getProductImage() {
+        return productImage;
+    }
+
+    public void setProductImage(Image productImage) {
+        this.productImage = productImage;
     }
 }
 /*

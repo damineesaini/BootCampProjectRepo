@@ -1,17 +1,15 @@
 package com.bootcamp.BootcampProject.dto.request;
 
-import com.bootcamp.BootcampProject.entity.product.CategoryMetadataFieldValues;
-
 import java.util.List;
 
 public class CategoryMetadataFieldValueDto {
-    private List<CategoryMetadataFieldDto> fieldValues;
+    private List<String> fieldValues;
 
-    public List<CategoryMetadataFieldDto> getFieldValues() {
+    public List<String> getFieldValues() {
         return fieldValues;
     }
 
-    public void setFieldValues(List<CategoryMetadataFieldDto> fieldValues) {
+    public void setFieldValues(List<String> fieldValues) {
         this.fieldValues = fieldValues;
     }
 }
