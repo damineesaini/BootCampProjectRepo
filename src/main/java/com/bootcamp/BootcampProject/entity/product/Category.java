@@ -6,7 +6,6 @@ import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "category")
 public class Category {
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -14,10 +13,11 @@ public class Category {
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
     private String name;
-
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="parent_category_id")
     private Category parentCategoryId;
+    private boolean isActive;
+    private boolean hasChild;
 
     public UUID getId() {
         return id;
@@ -43,6 +43,21 @@ public class Category {
         this.parentCategoryId = parentCategoryId;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public boolean isHasChild() {
+        return hasChild;
+    }
+
+    public void setHasChild(boolean hasChild) {
+        this.hasChild = hasChild;
+    }
 }
 
 

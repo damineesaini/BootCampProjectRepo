@@ -4,6 +4,7 @@ import com.bootcamp.BootcampProject.entity.user.Seller;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -30,6 +31,10 @@ public class Product {
     private String brand;
     @Column(name = "is_active")
     private boolean isActive;
+    private boolean isDelete;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name="product_id")
+    private Set<ProductVariation> productVariationId;
 
     public UUID getId() {
         return id;
@@ -101,6 +106,22 @@ public class Product {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public Set<ProductVariation> getProductVariationId() {
+        return productVariationId;
+    }
+
+    public void setProductVariationId(Set<ProductVariation> productVariationId) {
+        this.productVariationId = productVariationId;
+    }
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
     }
 }
 

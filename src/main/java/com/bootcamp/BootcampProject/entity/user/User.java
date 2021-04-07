@@ -1,6 +1,7 @@
 package com.bootcamp.BootcampProject.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -29,6 +30,8 @@ public class User{
     private boolean isDeleted;
     @Column(name = "is_active")
     private boolean isActive;
+    private boolean isLocked;
+    private long profileImage;
     @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
@@ -37,6 +40,9 @@ public class User{
     @ManyToMany(cascade = CascadeType.ALL,fetch=FetchType.EAGER)
     @JoinTable(name = "users_roles",joinColumns = @JoinColumn(name = "user_id",referencedColumnName = "id"),inverseJoinColumns = @JoinColumn(name = "role_id",referencedColumnName = "id"))
     private List<Role> roles = new ArrayList<>();
+
+    @JsonIgnore
+    private Integer loginAttempts=0;
 
     public User() {
     }
@@ -139,5 +145,29 @@ public class User{
             address.setUserId(this);
             addresses.add(address);
         }
+    }
+
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
+    }
+
+    public long getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(long profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public Integer getLoginAttempts() {
+        return loginAttempts;
+    }
+
+    public void setLoginAttempts(Integer loginAttempts) {
+        this.loginAttempts = loginAttempts;
     }
 }

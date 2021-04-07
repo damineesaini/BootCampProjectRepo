@@ -26,7 +26,7 @@ public class AppUserDetailsService implements UserDetailsService {
             else {
                 appUserDetails = userDaoService.loadUserByUsername(s);
             }
-        } catch (UserNotFoundException e) {
+        } catch (UserNotFoundException | Exception e) {
             e.printStackTrace();
         }
         return appUserDetails;

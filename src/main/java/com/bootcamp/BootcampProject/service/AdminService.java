@@ -15,7 +15,6 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.UUID;
 
@@ -83,8 +82,6 @@ public class AdminService {
     }
 
     public MappingJacksonValue findAllCustomer() {
-//        List<Customer> customers = (List<Customer>) customerRepository.findAll();
-//        return customers;
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("firstName","lastName","isActive","contactNo");
         FilterProvider filters = new SimpleFilterProvider().addFilter("userDynamicFilter",filter);
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(customerRepository.findAll());

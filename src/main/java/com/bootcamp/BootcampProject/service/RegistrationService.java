@@ -1,13 +1,16 @@
 package com.bootcamp.BootcampProject.service;
 
+import com.bootcamp.BootcampProject.dto.request.CustomerRegister;
 import com.bootcamp.BootcampProject.dto.request.ResendToken;
 import com.bootcamp.BootcampProject.dto.request.SellerRegister;
 import com.bootcamp.BootcampProject.entity.token.ConfirmationToken;
 import com.bootcamp.BootcampProject.entity.user.*;
-import com.bootcamp.BootcampProject.dto.request.CustomerRegister;
 import com.bootcamp.BootcampProject.exception.TokenExpiredException;
 import com.bootcamp.BootcampProject.exception.UserAlreadyExistException;
-import com.bootcamp.BootcampProject.repository.*;
+import com.bootcamp.BootcampProject.repository.ConfirmationTokenRepository;
+import com.bootcamp.BootcampProject.repository.CustomerRepository;
+import com.bootcamp.BootcampProject.repository.SellerRepository;
+import com.bootcamp.BootcampProject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,7 +18,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class RegistrationService {
@@ -46,38 +52,38 @@ public class RegistrationService {
         User userExists = userRepository.findByEmail(customerRegister.getEmail());
         if (userExists != null) throw new UserAlreadyExistException("User is already registered with the given email");
         else {
-            Customer newCustomer = new Customer();
-            User newUser = new User();
-            newUser.setEmail(customerRegister.getEmail());
-            newUser.setFirstName(customerRegister.getFirstName());
-            newUser.setMiddleName(customerRegister.getMiddleName());
-            newUser.setLastName(customerRegister.getLastName());
-            newUser.setPassword(bCryptPasswordEncoder.encode(customerRegister.getPassword()));
-            Address address = new Address();
-            address.setAddressLine(customerRegister.getAddressLine());
-            address.setCity(customerRegister.getCity());
-            address.setCountry(customerRegister.getCountry());
-            address.setState(customerRegister.getState());
-            address.setZipcode(customerRegister.getZipcode());
-            address.setLabel(customerRegister.getLabel());
-            newUser.addAddresses(address);
-            newUser.setActive(false);
-            newUser.setDeleted(false);
-            Role role = new Role();
-            role.setAuthority("ROLE_CUSTOMER");
-            newUser.setRoles(new ArrayList<>(Arrays.asList(role)));
-            newCustomer.setContactNo(customerRegister.getContact());
-            newCustomer.setUserId(newUser);
-            customerRepository.save(newCustomer);
-            ConfirmationToken confirmationToken= new ConfirmationToken(newUser);
-            confirmationTokenRepository.save(confirmationToken);
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(customerRegister.getEmail());
-            message.setFrom("damineesaini1111@gmail.com");
-            message.setSubject("Complete Registration");
-            message.setText("To confirm your account, please lick here:"+"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
-            emailSendService.sendEmail(message);
-            return newCustomer;
+                Customer newCustomer = new Customer();
+                User newUser = new User();
+                newUser.setEmail(customerRegister.getEmail());
+                newUser.setFirstName(customerRegister.getFirstName());
+                newUser.setMiddleName(customerRegister.getMiddleName());
+                newUser.setLastName(customerRegister.getLastName());
+                newUser.setPassword(bCryptPasswordEncoder.encode(customerRegister.getPassword()));
+                Address address = new Address();
+                address.setAddressLine(customerRegister.getAddressLine());
+                address.setCity(customerRegister.getCity());
+                address.setCountry(customerRegister.getCountry());
+                address.setState(customerRegister.getState());
+                address.setZipcode(customerRegister.getZipcode());
+                address.setLabel(customerRegister.getLabel());
+                newUser.addAddresses(address);
+                newUser.setActive(false);
+                newUser.setDeleted(false);
+                Role role = new Role();
+                role.setAuthority("ROLE_CUSTOMER");
+                newUser.setRoles(new ArrayList<>(Arrays.asList(role)));
+                newCustomer.setContactNo(customerRegister.getContact());
+                newCustomer.setUserId(newUser);
+                customerRepository.save(newCustomer);
+                ConfirmationToken confirmationToken= new ConfirmationToken(newUser);
+                confirmationTokenRepository.save(confirmationToken);
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(customerRegister.getEmail());
+                message.setFrom("damineesaini1111@gmail.com");
+                message.setSubject("Complete Registration");
+                message.setText("To confirm your account, please lick here:"+"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
+                emailSendService.sendEmail(message);
+                return newCustomer;
         }
 
     }
@@ -193,7 +199,7 @@ public class RegistrationService {
                     message.setTo(userExists.getEmail());
                     message.setFrom("damineesaini1111@gmail.com");
                     message.setSubject("Complete Registration");
-                    message.setText("To confirm your account, please lick here:"+"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
+                    message.setText("To confirm your account, please click here:"+"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
                     emailSendService.sendEmail(message);
 
                     return "New activation link is successfully sent on your registered email";

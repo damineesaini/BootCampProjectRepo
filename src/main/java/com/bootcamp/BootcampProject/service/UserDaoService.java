@@ -14,12 +14,17 @@ public class UserDaoService {
     @Autowired
     private UserRepository userRepository;
 
-    public AppUserDetails loadUserByUsername(String username) throws UserNotFoundException {
+    public AppUserDetails loadUserByUsername(String username) throws UserNotFoundException, Exception {
         User user=userRepository.findByEmail(username);
         System.out.println(user);
         if(user!=null){
             if(username!=null){
-                return new AppUserDetails(user);
+                if(user.isActive()){
+                    return new AppUserDetails(user);
+                }
+                else{
+                    throw new Exception("Account is not activated");
+                }
             }
             else {
                 throw new UsernameNotFoundException("username cannot not be blank");

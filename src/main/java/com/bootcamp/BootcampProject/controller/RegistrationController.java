@@ -29,10 +29,14 @@ public class RegistrationController {
         return registrationService.findAllCustomer();
     }
     @PostMapping("/customer-register")
-    public ResponseEntity<Object> registerCustomer(@Valid @RequestBody CustomerRegister customer) throws UserAlreadyExistException {
+    public Object registerCustomer(@Valid @RequestBody CustomerRegister customer) throws UserAlreadyExistException {
+        if(customer.getPassword().equals(customer.getConfirmPassword())){
         Customer newCustomer = registrationService.createNewCustomer(customer);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(newCustomer.getUserId()).toUri();
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).build();}
+        else {
+            return "password does not match";
+        }
     }
 
     @PutMapping("/confirm-account")
@@ -46,9 +50,13 @@ public class RegistrationController {
     }
 
     @PostMapping("/seller-register")
-    public ResponseEntity<Object> registerSeller(@Valid @RequestBody SellerRegister sellerRegister) throws UserAlreadyExistException {
-            Seller newSeller = registrationService.createNewSeller(sellerRegister);
+    public Object registerSeller(@Valid @RequestBody SellerRegister sellerRegister) throws UserAlreadyExistException {
+        if(sellerRegister.getPassword().equals(sellerRegister.getConfirmPassword())){
+        Seller newSeller = registrationService.createNewSeller(sellerRegister);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(newSeller.getUserId()).toUri();
-            return ResponseEntity.created(location).build();
+            return ResponseEntity.created(location).build();}
+                    else {
+            return "password does not match";
+        }
     }
 }
