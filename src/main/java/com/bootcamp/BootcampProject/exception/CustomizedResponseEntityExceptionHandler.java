@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.IOException;
 import java.util.Date;
 
 @ControllerAdvice
@@ -17,7 +18,84 @@ import java.util.Date;
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
-    public final ResponseEntity<Object> handleEmployeeNotFoundException(UserNotFoundException exception, WebRequest request) {
+    public final ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException exception, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AccountLockException.class)
+    public final ResponseEntity<Object> handleAccountLockException(AccountLockException exception, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(AlreadyExistException.class)
+    public final ResponseEntity<Object> handleAlreadyExistException(AlreadyExistException exception, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public final ResponseEntity<Object> handleCategoryNotFoundException(CategoryNotFoundException exception, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InactiveException.class)
+    public final ResponseEntity<Object> handleInactiveException(InactiveException exception, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public final ResponseEntity<Object> handleProductNotFoundException(ProductNotFoundException exception, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public final ResponseEntity<Object> handleTokenExpiredException(TokenExpiredException exception, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(DoesNotExistException.class)
+    public final ResponseEntity<Object> handleDoesNotExistException(DoesNotExistException exception, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(PasswordDoesNotMatchException.class)
+    public final ResponseEntity<Object> handlePasswordDoesNotMatchException(PasswordDoesNotMatchException exception, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public final ResponseEntity<Object> handleUnauthorizedAccessException(UnauthorizedAccessException exception, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(NotChildCategoryException.class)
+    public final ResponseEntity<Object> handleNotChildCategoryException(NotChildCategoryException exception, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(IOException.class)
+    public final ResponseEntity<Object> handleIOException(IOException exception, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
                 request.getDescription(false));
         return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);

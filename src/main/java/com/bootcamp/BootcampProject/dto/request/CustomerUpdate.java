@@ -1,19 +1,20 @@
 package com.bootcamp.BootcampProject.dto.request;
 
-import javax.validation.constraints.Email;
+import com.bootcamp.BootcampProject.utility.ValidationRegex;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 public class CustomerUpdate {
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @Pattern(regexp = ValidationRegex.ISALPHA)
     @NotNull
     private String firstName;
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @Pattern(regexp = ValidationRegex.ISALPHA)
     private String middleName;
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @Pattern(regexp = ValidationRegex.ISALPHA)
     @NotNull
     private String lastName;
-    @Pattern(regexp = "(0/91)?[7-9][0-9]{9}")
+    @Pattern(regexp = ValidationRegex.PHONE)
     @NotNull
     private String contactNo;
 

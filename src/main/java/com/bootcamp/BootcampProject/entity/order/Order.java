@@ -126,19 +126,3 @@ public class Order {
     }
 }
 
-/*
-* create table order(
-*   id int,
-*   customer_user_id int,
-*   amount_paid double,
-*   date_created date,
-*   payment_method double,
-*   customer_city varchar(10),
-*   customer_state varchar(10),
-*   customer_country varchar(10),
-*   customer_address_line varchar(15),
-*   customer_zipcode int,
-*   customer_label varchar(10),
-*   foreign key (customer_user_id)
-    references customer(user_id),
-* );*/

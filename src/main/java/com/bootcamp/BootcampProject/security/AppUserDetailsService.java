@@ -1,6 +1,7 @@
 package com.bootcamp.BootcampProject.security;
 
 import com.bootcamp.BootcampProject.entity.user.AppUserDetails;
+import com.bootcamp.BootcampProject.exception.InactiveException;
 import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.service.UserDaoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class AppUserDetailsService implements UserDetailsService {
             else {
                 appUserDetails = userDaoService.loadUserByUsername(s);
             }
-        } catch (UserNotFoundException | Exception e) {
+        } catch (UserNotFoundException | Exception | InactiveException e) {
             e.printStackTrace();
         }
         return appUserDetails;

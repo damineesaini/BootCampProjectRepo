@@ -1,14 +1,14 @@
 package com.bootcamp.BootcampProject.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
 @Table(name = "address")
-@JsonFilter("addressFilter")
+//@JsonFilter("addressFilter")
 public class Address {
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -23,9 +23,10 @@ public class Address {
     private int zipcode;
     private String label;
     @JsonBackReference
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL,optional = false)
     @JoinColumn(name="user_id")
     private User userId;
+    private boolean isDelete;
 
     public UUID getId() {
         return id;
@@ -90,20 +91,13 @@ public class Address {
     public void setUserId(User userId) {
         this.userId = userId;
     }
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
+    }
 }
 
-
-/*
- * CREATE TABLE address(
- *   id integer primary key auto_increment,
- *   city varchar(10),
- *   state varchar(10),
- *   country varchar(10),
- *   address_line varchar(20),
- *   zipcode int,
- *   label varchar(10),
- *   user_id int,
- *   foreign key (user_id)
- *   references user(id)
- * );
- * */

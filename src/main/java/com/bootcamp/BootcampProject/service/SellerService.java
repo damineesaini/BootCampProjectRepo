@@ -7,6 +7,7 @@ import com.bootcamp.BootcampProject.entity.user.Address;
 import com.bootcamp.BootcampProject.entity.user.AppUserDetails;
 import com.bootcamp.BootcampProject.entity.user.Seller;
 import com.bootcamp.BootcampProject.entity.user.User;
+import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.repository.AddressRepository;
 import com.bootcamp.BootcampProject.repository.SellerRepository;
 import com.bootcamp.BootcampProject.repository.UserRepository;
@@ -41,7 +42,6 @@ public class SellerService {
 
     public Seller getLoggedInSeller(){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-
         AppUserDetails appUserDetails = (AppUserDetails) authentication.getPrincipal();
         String username= appUserDetails.getUsername();
         User user = userRepository.findByEmail(username);
@@ -68,7 +68,7 @@ public class SellerService {
 
     @Transactional
     @Modifying
-    public String updateSellerProfile(SellerUpdate sellerUpdate, UUID id){
+    public String updateSellerProfile(SellerUpdate sellerUpdate, UUID id) throws UserNotFoundException {
         if(userRepository.findById(id).isPresent()){
             User user1 = userRepository.findById(id).get();
             Seller seller = sellerRepository.findByUserId(user1);
@@ -86,8 +86,11 @@ public class SellerService {
 
             seller.setUserId(user1);
             sellerRepository.save(seller);
+            return  "Profile updated Successfully";
         }
-        return  "Profile updated Successfully";
+else {
+    throw new UserNotFoundException("user does not found. invalid user id");
+        }
     }
 
     @Transactional

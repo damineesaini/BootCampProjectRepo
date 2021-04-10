@@ -1,18 +1,16 @@
 package com.bootcamp.BootcampProject.entity.user;
 
 import com.bootcamp.BootcampProject.entity.image.Image;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.*;
-import java.util.UUID;
 
 @Entity
 @Table(name = "user")
-@JsonFilter("userFilter")
+//@JsonFilter("userFilter")
 public class User{
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -36,9 +34,10 @@ public class User{
     @OneToOne(cascade = CascadeType.ALL)
     private Image profileImage;
     @JsonManagedReference
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "user_id")
     private Set<Address> addresses;
+    @JsonIgnore
     @JsonManagedReference
     @ManyToMany(cascade = CascadeType.ALL,fetch=FetchType.EAGER)
     @JoinTable(name = "users_roles",joinColumns = @JoinColumn(name = "user_id",referencedColumnName = "id"),inverseJoinColumns = @JoinColumn(name = "role_id",referencedColumnName = "id"))

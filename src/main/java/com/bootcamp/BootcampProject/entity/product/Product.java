@@ -1,7 +1,7 @@
 package com.bootcamp.BootcampProject.entity.product;
 
-import com.bootcamp.BootcampProject.entity.image.Image;
 import com.bootcamp.BootcampProject.entity.user.Seller;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -33,6 +33,7 @@ public class Product {
     @Column(name = "is_active")
     private boolean isActive;
     private boolean isDelete;
+    @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name="product_id")
     private Set<ProductVariation> productVariationId;
@@ -129,19 +130,3 @@ public class Product {
 
 }
 
-/*
-* create table product(
-*   id int,
-*   seller_user_id int,
-*   name varchar(20),
-*   description varchar(100),
-*   category_id int,
-*   is_cancellable boolean,
-*   is_returnable boolean,
-*   brand varchar(20),
-*   is_active boolean,
-* foreign key (seller_user_id)
-    references seller(user_id),
-    * foreign key (category_id)
-    references category(id)
-* );*/

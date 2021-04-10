@@ -35,10 +35,3 @@ public class Customer{
 
 }
 
-/*
-* create table customer(
-*   user_id int,
-*   contact_no varchar(12),
-*   foreign key (user_id)
-*   references user(id)
-* );*/

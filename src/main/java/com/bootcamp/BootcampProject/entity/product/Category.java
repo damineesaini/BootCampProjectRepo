@@ -61,13 +61,5 @@ public class Category {
 }
 
 
-/*
- * create table category(
- *   id int,
- *   name varchar(20),
- *   parent_category_id int,
- *   foreign key (parent_category_id)
- *   references category(id)
- * );*/
 
 

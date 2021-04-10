@@ -3,8 +3,8 @@ package com.bootcamp.BootcampProject.controller;
 import com.bootcamp.BootcampProject.dto.request.CustomerUpdate;
 import com.bootcamp.BootcampProject.dto.request.NewAddress;
 import com.bootcamp.BootcampProject.dto.request.UpdatePasswordDto;
-import com.bootcamp.BootcampProject.entity.user.Address;
 import com.bootcamp.BootcampProject.entity.user.Customer;
+import com.bootcamp.BootcampProject.exception.DoesNotExistException;
 import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +12,10 @@ import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -34,12 +34,12 @@ public class CustomerController {
     }
 
     @GetMapping("/addresses")
-    public Set<Address> customerAddress() throws UserNotFoundException {
-        return (Set<Address>) customerService.getAddress();
+    public MappingJacksonValue customerAddress() throws UserNotFoundException {
+        return customerService.getAddress();
     }
 
     @PutMapping("/update-profile")
-    public String updateProfile(@RequestBody CustomerUpdate customerUpdate, HttpServletResponse response){
+    public String updateProfile(@RequestBody CustomerUpdate customerUpdate, HttpServletResponse response) throws UserNotFoundException {
         Customer customer = customerService.getLoggedInCustomer();
         UUID id =customer.getUserId().getId();
         String message = customerService.updateCustomerProfile(customerUpdate,id);
@@ -47,7 +47,7 @@ public class CustomerController {
     }
 
     @PostMapping("/add-address")
-    public String addAddress(@RequestBody NewAddress newAddress, HttpServletResponse response){
+    public String addAddress(@RequestBody NewAddress newAddress, HttpServletResponse response) throws UserNotFoundException {
         Customer customer = customerService.getLoggedInCustomer();
         UUID id = customer.getUserId().getId();
         String message = customerService.addAddress(newAddress,id);
@@ -55,7 +55,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/delete-address/{addressId}")
-    public String deleteAddress(@PathVariable String addressId,HttpServletResponse response){
+    public String deleteAddress(@PathVariable String addressId,HttpServletResponse response) throws DoesNotExistException {
         UUID addressid = UUID.fromString(addressId);
         Customer customer = customerService.getLoggedInCustomer();
         UUID id =customer.getUserId().getId();
@@ -64,7 +64,7 @@ public class CustomerController {
     }
 
     @PutMapping("/update-address/{addressId}")
-    public String updateAddress(@Valid @RequestBody NewAddress newAddress, @PathVariable String addressId, HttpServletResponse response){
+    public String updateAddress(@Valid @RequestBody NewAddress newAddress, @PathVariable String addressId, HttpServletResponse response) throws DoesNotExistException {
         UUID addressid = UUID.fromString(addressId);
         Customer customer = customerService.getLoggedInCustomer();
         UUID id =customer.getUserId().getId();
@@ -73,7 +73,7 @@ public class CustomerController {
     }
 
     @PutMapping("/update-password")
-    public String updateAddress(@Valid @RequestBody UpdatePasswordDto updatePasswordDto){
+    public String updateAddress(@Valid @RequestBody UpdatePasswordDto updatePasswordDto) throws UserNotFoundException {
         Customer customer = customerService.getLoggedInCustomer();
         UUID id =customer.getUserId().getId();
         String message = customerService.updatePassword(updatePasswordDto,id);

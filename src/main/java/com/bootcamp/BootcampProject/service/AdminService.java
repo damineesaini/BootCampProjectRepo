@@ -1,6 +1,5 @@
 package com.bootcamp.BootcampProject.service;
 
-import com.bootcamp.BootcampProject.entity.user.Seller;
 import com.bootcamp.BootcampProject.entity.user.User;
 import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.repository.CustomerRepository;
@@ -15,7 +14,6 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -82,17 +80,23 @@ public class AdminService {
     }
 
     public MappingJacksonValue findAllCustomer() {
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("firstName","lastName","isActive","contactNo");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("userDynamicFilter",filter);
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id","firstName","lastName","email","isActive");
+        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter",filter);
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(customerRepository.findAll());
         mappingJacksonValue.setFilters(filters);
         return mappingJacksonValue;
+//        CustomerResponseDto customerResponseDto =new CustomerResponseDto();
+//        customerResponseDto.setId();
     }
 
 
 
-    public List<Seller> findAllSeller() {
-        List<Seller> sellers = (List<Seller>) sellerRepository.findAll();
-        return sellers;
+    public MappingJacksonValue findAllSeller() {
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id","firstName","lastName","email","isActive","addresses");
+        SimpleBeanPropertyFilter filter1 = SimpleBeanPropertyFilter.filterOutAllExcept("addressLine","city","state","country","zipcode","label");
+        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter",filter).addFilter("addressFilter",filter1);
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(sellerRepository.findAll());
+        mappingJacksonValue.setFilters(filters);
+        return mappingJacksonValue;
     }
 }

@@ -1,42 +1,44 @@
 package com.bootcamp.BootcampProject.dto.request;
 
+import com.bootcamp.BootcampProject.utility.ValidationRegex;
+
 import javax.validation.constraints.*;
 
 public class CustomerRegister {
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @Pattern(regexp = ValidationRegex.ISALPHA)
     @NotNull
     private String firstName;
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @Pattern(regexp = ValidationRegex.ISALPHA)
     private String middleName;
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @Pattern(regexp = ValidationRegex.ISALPHA)
     @NotNull
     private String lastName;
     @Email(message = "Email should be valid")
     private String email;
-    @Pattern(regexp = "(0/91)?[7-9][0-9]{9}")
+    @Pattern(regexp = ValidationRegex.PHONE)
     @NotNull
     private String contact;
-    @Pattern(regexp = "^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\\d]){1,})(?=(.*[\\W]){1,})(?!.*\\s).{8,}$")
+    @Pattern(regexp = ValidationRegex.PASSWORD)
     private String password;
-    @Pattern(regexp = "^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\\d]){1,})(?=(.*[\\W]){1,})(?!.*\\s).{8,}$")
+    @Pattern(regexp = ValidationRegex.PASSWORD)
     private String confirmPassword;
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @Pattern(regexp = ValidationRegex.ISALPHA)
     @NotNull
     private String city;
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @Pattern(regexp = ValidationRegex.ISALPHA)
     @NotNull
     private String state;
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @Pattern(regexp = ValidationRegex.ISALPHA)
     @NotNull
     private String country;
     @NotNull
-    @Pattern(regexp ="[A-Za-z0-9'\\.\\-\\s\\,]")
+    @Pattern(regexp =ValidationRegex.ADDRESSlINE)
     private String addressLine;
     @Positive
     @Min(100000)
     @Max(999999)
     private int zipcode;
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @Pattern(regexp = ValidationRegex.ISALPHA)
     @NotNull
     private String label;
 

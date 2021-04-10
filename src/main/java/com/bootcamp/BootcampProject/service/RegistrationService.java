@@ -5,8 +5,8 @@ import com.bootcamp.BootcampProject.dto.request.ResendToken;
 import com.bootcamp.BootcampProject.dto.request.SellerRegister;
 import com.bootcamp.BootcampProject.entity.token.ConfirmationToken;
 import com.bootcamp.BootcampProject.entity.user.*;
+import com.bootcamp.BootcampProject.exception.AlreadyExistException;
 import com.bootcamp.BootcampProject.exception.TokenExpiredException;
-import com.bootcamp.BootcampProject.exception.UserAlreadyExistException;
 import com.bootcamp.BootcampProject.repository.ConfirmationTokenRepository;
 import com.bootcamp.BootcampProject.repository.CustomerRepository;
 import com.bootcamp.BootcampProject.repository.SellerRepository;
@@ -21,7 +21,6 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 @Service
 public class RegistrationService {
@@ -43,14 +42,9 @@ public class RegistrationService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public List<Seller> findAllCustomer() {
-        List<Seller> sellers = (List<Seller>) sellerRepository.findAll();
-        return sellers;
-    }
-
-    public Customer createNewCustomer(CustomerRegister customerRegister) throws UserAlreadyExistException {
+    public Customer createNewCustomer(CustomerRegister customerRegister) throws AlreadyExistException {
         User userExists = userRepository.findByEmail(customerRegister.getEmail());
-        if (userExists != null) throw new UserAlreadyExistException("User is already registered with the given email");
+        if (userExists != null) throw new AlreadyExistException("User is already registered with the given email");
         else {
                 Customer newCustomer = new Customer();
                 User newUser = new User();
@@ -66,6 +60,7 @@ public class RegistrationService {
                 address.setState(customerRegister.getState());
                 address.setZipcode(customerRegister.getZipcode());
                 address.setLabel(customerRegister.getLabel());
+                address.setDelete(false);
                 newUser.addAddresses(address);
                 newUser.setActive(false);
                 newUser.setDeleted(false);
@@ -88,10 +83,10 @@ public class RegistrationService {
 
     }
 
-    public Seller createNewSeller(SellerRegister sellerRegister) throws UserAlreadyExistException {
+    public Seller createNewSeller(SellerRegister sellerRegister) throws AlreadyExistException {
 
               User userExists = userRepository.findByEmail(sellerRegister.getEmail());
-        if (userExists != null) throw new UserAlreadyExistException("User is already registered with the given email");
+        if (userExists != null) throw new AlreadyExistException("User is already registered with the given email");
         else {
             Seller newSeller = new Seller();
             User newUser = new User();
@@ -107,6 +102,7 @@ public class RegistrationService {
             address.setState(sellerRegister.getState());
             address.setZipcode(sellerRegister.getZipcode());
             address.setLabel(sellerRegister.getLabel());
+            address.setDelete(false);
             newUser.addAddresses(address);
             newUser.setActive(false);
             newUser.setDeleted(false);

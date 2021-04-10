@@ -1,8 +1,10 @@
 package com.bootcamp.BootcampProject.dto.request;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class ProductDto {
+    @NotNull
     private String category;
     private List<ProductRequestParams> productRequestParams;
 

@@ -52,14 +52,12 @@ public class Seller{
     public void setGst(String gst) {
         this.gst = gst;
     }
-}
 
-/*
- * create table seller(
- *   user_id int,
- *   gst varchar(12),
- *   company_contact_no varchar(12),
- *   company_name varchar(30),
- * foreign key (user_id)
-    references user(id),
- * );*/
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+}

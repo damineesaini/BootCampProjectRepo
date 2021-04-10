@@ -11,9 +11,11 @@ import java.util.UUID;
 
 @Repository
 public interface CategoryRepository extends CrudRepository<Category, UUID> {
-    @Query(value = "Select * from category where parent_category_id is not NULL",nativeQuery = true)
-    List<Category> findAllChildCategory();
 
     @Query(value = "Select * from category where name =:name", nativeQuery = true )
     Category findByName(@Param("name") String name);
+
+    @Query(value = "Select * from category where parent_category_id =:parentCategoryId", nativeQuery = true )
+    List<Category> findAllByParentId(@Param("parentCategoryId") UUID parentCategoryId);
+
 }

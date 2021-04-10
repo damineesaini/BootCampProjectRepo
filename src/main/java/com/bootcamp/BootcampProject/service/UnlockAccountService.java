@@ -46,7 +46,7 @@ public class UnlockAccountService {
             message.setTo(user.getEmail());
             message.setFrom("damineesaini1111@gmail.com");
             message.setSubject("Account Locked");
-            message.setText("To unlock your account, please click here:"+"http://localhost:8080/unlock-account?token="+unlockAccountToken.getUnlockAccountToken());
+            message.setText("To unlock your account, please click here:"+"http://localhost:8080/unlock/account-unlocked?token="+unlockAccountToken.getUnlockAccountToken());
             emailSendService.sendEmail(message);
             return "Mail has been sent to you. Click on the link to unlock your account";
         }

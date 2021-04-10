@@ -1,12 +1,12 @@
 package com.bootcamp.BootcampProject.controller;
 
+import com.bootcamp.BootcampProject.dto.request.CustomerRegister;
 import com.bootcamp.BootcampProject.dto.request.ResendToken;
 import com.bootcamp.BootcampProject.dto.request.SellerRegister;
 import com.bootcamp.BootcampProject.entity.user.Customer;
 import com.bootcamp.BootcampProject.entity.user.Seller;
+import com.bootcamp.BootcampProject.exception.AlreadyExistException;
 import com.bootcamp.BootcampProject.exception.TokenExpiredException;
-import com.bootcamp.BootcampProject.exception.UserAlreadyExistException;
-import com.bootcamp.BootcampProject.dto.request.CustomerRegister;
 import com.bootcamp.BootcampProject.service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/register")
@@ -24,12 +23,8 @@ public class RegistrationController {
     @Autowired
     RegistrationService registrationService;
 
-    @GetMapping
-    public List<Seller> allCustomer(){
-        return registrationService.findAllCustomer();
-    }
     @PostMapping("/customer-register")
-    public Object registerCustomer(@Valid @RequestBody CustomerRegister customer) throws UserAlreadyExistException {
+    public Object registerCustomer(@Valid @RequestBody CustomerRegister customer) throws AlreadyExistException {
         if(customer.getPassword().equals(customer.getConfirmPassword())){
         Customer newCustomer = registrationService.createNewCustomer(customer);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(newCustomer.getUserId()).toUri();
@@ -50,7 +45,7 @@ public class RegistrationController {
     }
 
     @PostMapping("/seller-register")
-    public Object registerSeller(@Valid @RequestBody SellerRegister sellerRegister) throws UserAlreadyExistException {
+    public Object registerSeller(@Valid @RequestBody SellerRegister sellerRegister) throws AlreadyExistException {
         if(sellerRegister.getPassword().equals(sellerRegister.getConfirmPassword())){
         Seller newSeller = registrationService.createNewSeller(sellerRegister);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(newSeller.getUserId()).toUri();

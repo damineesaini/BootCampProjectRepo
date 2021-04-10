@@ -65,15 +65,4 @@ public class OrderProduct {
     }
 }
 
-/*
-* create table  order_product(
-*   id int,
-*   order_id int,
-*   quantity int,
-*   product_variation_id int,
-*   product_variation_metadata varchar(50),
-* foreign key (order_id)
-    references order(id),
-    * foreign key (product_variation_id)
-    references product_variation(id)
-* );*/
+

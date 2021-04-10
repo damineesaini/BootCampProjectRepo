@@ -1,11 +1,13 @@
 package com.bootcamp.BootcampProject.dto.request;
 
+import com.bootcamp.BootcampProject.utility.ValidationRegex;
+
 import javax.validation.constraints.Pattern;
 
 public class ForgotPassword {
-    @Pattern(regexp = "^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\\d]){1,})(?=(.*[\\W]){1,})(?!.*\\s).{8,}$")
+    @Pattern(regexp = ValidationRegex.PASSWORD)
     private String password;
-    @Pattern(regexp = "^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\\d]){1,})(?=(.*[\\W]){1,})(?!.*\\s).{8,}$")
+    @Pattern(regexp = ValidationRegex.PASSWORD)
     private String confirmPassword;
 
     public String getPassword() {

@@ -1,25 +1,27 @@
 package com.bootcamp.BootcampProject.dto.request;
 
+import com.bootcamp.BootcampProject.utility.ValidationRegex;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 public class SellerUpdate {
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @Pattern(regexp = ValidationRegex.ISALPHA)
     @NotNull
     private String firstName;
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @Pattern(regexp = ValidationRegex.ISALPHA)
     private String middleName;
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @Pattern(regexp = ValidationRegex.ISALPHA)
     @NotNull
     private String lastName;
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @Pattern(regexp = ValidationRegex.ISALPHA)
     @NotNull
     private String companyName;
-    @Pattern(regexp = "(0/91)?[7-9][0-9]{9}")
+    @Pattern(regexp = ValidationRegex.PHONE)
     @NotNull
     private String companyContactNo;
     @NotNull
-    @Pattern(regexp = "\\d{2}[A-Z]{5}\\d{4}[A-Z]{1}[A-Z\\d]{1}[Z]{1}[A-Z\\d]{1}")
+    @Pattern(regexp = ValidationRegex.GST)
     private String gst;
 
     public String getFirstName() {

@@ -1,9 +1,12 @@
 package com.bootcamp.BootcampProject.entity.product;
 
 import com.bootcamp.BootcampProject.entity.image.Image;
+import com.bootcamp.BootcampProject.utility.HashMapConverter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Map;
 import java.util.UUID;
 
 @Entity
@@ -14,14 +17,16 @@ public class ProductVariation {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
+    @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="product_id")
     private Product productId;
     @Column(name = "quantity_available")
     private int quantityAvailable;
     private double price;
+    @Convert(converter = HashMapConverter.class)
     @Column(name = "product_metadata",columnDefinition = "JSON")
-    private String productMetadata;
+    private Map<String,String> productMetadata;
     @Column(name = "is_active")
     private boolean isActive;
     private boolean isDeleted;
@@ -60,11 +65,11 @@ public class ProductVariation {
         this.price = price;
     }
 
-    public String getProductMetadata() {
+    public Map<String,String> getProductMetadata() {
         return productMetadata;
     }
 
-    public void setProductMetadata(String productMetadata) {
+    public void setProductMetadata(Map<String,String> productMetadata) {
         this.productMetadata = productMetadata;
     }
 
@@ -84,15 +89,3 @@ public class ProductVariation {
         this.productImage = productImage;
     }
 }
-/*
-* create table product_variation(
-*   id int,
-*   product_id int,
-*   quantity_available int,
-*   price double,
-*   product_metadata varchar(100),
-*   is_active boolean,
-*   foreign key (product_id)
-    references product(id),
-* );
-* */

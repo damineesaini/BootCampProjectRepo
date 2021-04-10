@@ -7,6 +7,8 @@ import com.bootcamp.BootcampProject.entity.user.Address;
 import com.bootcamp.BootcampProject.entity.user.AppUserDetails;
 import com.bootcamp.BootcampProject.entity.user.Customer;
 import com.bootcamp.BootcampProject.entity.user.User;
+import com.bootcamp.BootcampProject.exception.DoesNotExistException;
+import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.repository.AddressRepository;
 import com.bootcamp.BootcampProject.repository.CustomerRepository;
 import com.bootcamp.BootcampProject.repository.UserRepository;
@@ -68,7 +70,7 @@ public class CustomerService {
 
     @Transactional
     @Modifying
-    public String updateCustomerProfile(CustomerUpdate customerUpdate, UUID id){
+    public String updateCustomerProfile(CustomerUpdate customerUpdate, UUID id) throws UserNotFoundException {
         if(userRepository.findById(id).isPresent()){
             User user1 = userRepository.findById(id).get();
             Customer customer = customerRepository.findByUserId(user1);
@@ -86,13 +88,16 @@ public class CustomerService {
             }
             customer.setUserId(user1);
             customerRepository.save(customer);
+            return "Profile updated Successfully";
         }
-        return  "Profile updated Successfully";
+        else {
+            throw new UserNotFoundException("invalid user id");
+        }
     }
 
     @Transactional
     @Modifying
-    public String addAddress(NewAddress newAddress,UUID id) {
+    public String addAddress(NewAddress newAddress,UUID id) throws UserNotFoundException {
         if(userRepository.findById(id).isPresent()){
             User user1 = userRepository.findById(id).get();
             Address address = new Address();
@@ -104,22 +109,31 @@ public class CustomerService {
             address.setLabel(newAddress.getLabel());
             address.setUserId(user1);
             addressRepository.save(address);
+
+            return "address added";
         }
-        return "address added";
+        else {
+            throw new UserNotFoundException("invalid user id. user is not found.");
+        }
     }
 
     @Transactional
     @Modifying
-    public String deleteAddress(UUID addressId, UUID id){
+    public String deleteAddress(UUID addressId, UUID id) throws DoesNotExistException {
         if (addressRepository.findById(addressId).isPresent()){
-            addressRepository.deleteAddress(id,addressId);
+            Address address = addressRepository.findById(addressId).get();
+            address.setDelete(true);
+            addressRepository.save(address);
+            return "Address Deleted";
         }
-        return "Address Deleted";
+        else {
+            throw new DoesNotExistException("Address id does not exist");
+        }
     }
 
     @Transactional
     @Modifying
-    public String updateAddress(NewAddress newAddress,UUID addressId,UUID id){
+    public String updateAddress(NewAddress newAddress,UUID addressId,UUID id) throws DoesNotExistException {
         if (addressRepository.findById(addressId).isPresent()){
             Address updatedAddress= addressRepository.findById(addressId).get();
 
@@ -143,11 +157,14 @@ public class CustomerService {
                     updatedAddress.setLabel(newAddress.getLabel());
                 }
             }
+            return "address updated successfully";
         }
-        return "address updated successfully";
+        else {
+            throw new DoesNotExistException("Address id does not exist");
+        }
     }
 
-    public String updatePassword(UpdatePasswordDto updatePasswordDto , UUID id) {
+    public String updatePassword(UpdatePasswordDto updatePasswordDto , UUID id) throws UserNotFoundException {
         if (userRepository.findById(id).isPresent()) {
             User user = userRepository.findById(id).get();
 
@@ -171,7 +188,8 @@ public class CustomerService {
                 }
             }
             return "password updated successfully!!";
+        } else {
+            throw new UserNotFoundException("user not found. invalid user id");
         }
-        return "user not found";
     }
 }

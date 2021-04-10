@@ -1,8 +1,13 @@
 package com.bootcamp.BootcampProject.dto.request;
 
+import javax.validation.constraints.NotNull;
+
 public class ProductRequestParams {
+    @NotNull
     private String category;
+    @NotNull
     private String name;
+    @NotNull
     private String brand;
     private String description;
     private boolean isCancellable;

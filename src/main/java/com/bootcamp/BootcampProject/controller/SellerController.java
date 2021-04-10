@@ -34,7 +34,7 @@ public class SellerController {
     }
 
     @PutMapping("/update-profile")
-    public String updateProfile(@Valid @RequestBody SellerUpdate sellerUpdate, HttpServletResponse response){
+    public String updateProfile(@Valid @RequestBody SellerUpdate sellerUpdate, HttpServletResponse response) throws UserNotFoundException {
         Seller seller = sellerService.getLoggedInSeller();
         UUID id =seller.getUserId().getId();
         String message = sellerService.updateSellerProfile(sellerUpdate,id);

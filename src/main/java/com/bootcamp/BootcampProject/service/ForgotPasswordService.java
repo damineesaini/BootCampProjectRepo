@@ -3,15 +3,17 @@ package com.bootcamp.BootcampProject.service;
 import com.bootcamp.BootcampProject.dto.request.ForgotPassword;
 import com.bootcamp.BootcampProject.entity.token.ResetPasswordToken;
 import com.bootcamp.BootcampProject.entity.user.User;
+import com.bootcamp.BootcampProject.exception.DoesNotExistException;
+import com.bootcamp.BootcampProject.exception.PasswordDoesNotMatchException;
+import com.bootcamp.BootcampProject.exception.TokenExpiredException;
+import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.repository.ResetPasswordRepository;
 import com.bootcamp.BootcampProject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.Access;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,9 +34,9 @@ public class ForgotPasswordService {
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public String resetPassword(String email){
+    public String resetPassword(String email) throws UserNotFoundException {
         if(userRepository.findByEmail(email) == null){
-            throw new UsernameNotFoundException("invalid email");
+            throw new UserNotFoundException("user not found.invalid email");
         }
         else {
             User user = userRepository.findByEmail(email);
@@ -62,15 +64,15 @@ public class ForgotPasswordService {
         }
     }
 
-    public String updatePassword(String resetToken, ForgotPassword forgotPassword) throws Exception {
+    public String updatePassword(String resetToken, ForgotPassword forgotPassword) throws TokenExpiredException, DoesNotExistException, PasswordDoesNotMatchException {
         if (resetPasswordRepository.findByResetToken(resetToken) == null){
-            throw new Exception("invalid token");
+            throw new DoesNotExistException("invalid token");
         }
         else {
             ResetPasswordToken resetPasswordToken = resetPasswordRepository.findByResetToken(resetToken);
             Date presentDate = new Date();
             if (resetPasswordToken.getExpiryDate().getTime() - presentDate.getTime() <=0){
-                throw new Exception("token is expired, request for new token using forgot password link");
+                throw new TokenExpiredException("token is expired, request for new token using forgot password link");
             }
             else {
              User user = userRepository.findByEmail(resetPasswordToken.getUser().getEmail());
@@ -88,7 +90,7 @@ public class ForgotPasswordService {
                  return "Password Updated";
              }
              else {
-                 throw new Exception("password and confirm password does not match");
+                 throw new PasswordDoesNotMatchException("password and confirm password does not match");
              }
 
             }

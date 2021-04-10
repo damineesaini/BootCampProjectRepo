@@ -1,9 +1,15 @@
 package com.bootcamp.BootcampProject.dto.request;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.Map;
 
 public class ProductVariationDto {
+    @NotNull
+    @Positive
     private int quantityAvailable;
+    @NotNull
+    @Positive
     private double price;
     private Map<String,String> metadataFieldValuesMap;
 
@@ -27,7 +33,8 @@ public class ProductVariationDto {
         return metadataFieldValuesMap;
     }
 
-    public void setMetadataFieldValuesMap(Map<String, String> metadataFieldValuesMap) {
+    public void setMetadataFieldValuesMap(Map<String,String> metadataFieldValuesMap) {
         this.metadataFieldValuesMap = metadataFieldValuesMap;
     }
+
 }

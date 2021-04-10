@@ -1,8 +1,14 @@
 package com.bootcamp.BootcampProject.dto.request;
 
+import com.bootcamp.BootcampProject.utility.ValidationRegex;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 public class CategoryMetadataFieldDto {
+    @Pattern(regexp = ValidationRegex.ISALPHA)
+    @NotNull
     private String name;
-//    private Set<String> values;
 
     public String getName() {
         return name;
@@ -12,11 +18,4 @@ public class CategoryMetadataFieldDto {
         this.name = name;
     }
 
-//    public Set<String> getValues() {
-//        return values;
-//    }
-//
-//    public void setValues(Set<String> values) {
-//        this.values = values;
-//    }
 }

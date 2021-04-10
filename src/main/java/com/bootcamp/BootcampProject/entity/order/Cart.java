@@ -58,14 +58,3 @@ public class Cart {
     }
 }
 
-/*
-* create table cart(
-*   customer_user_id int,
-*   quantity int,
-*   is_wishlist_item boolean,
-*   product_variation_id int,
-*   foreign key (customer_user_id)
-*   references customer(user_id)
-*   foreign key (product_variation_id)
-*   references product_variation(id)
-* );*/

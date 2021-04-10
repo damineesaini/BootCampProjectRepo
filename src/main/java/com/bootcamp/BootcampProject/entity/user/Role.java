@@ -44,19 +44,3 @@ public class Role {
         this.users = users;
     }
 }
-
-/*
-* create table role(
-*   id integer primary_key auto_increment,
-*   authority varchar(10)
-* );
-*
-* create table users_roles(
-*   user_id int,
-*   role_id int,
-*   foreign key (user_id)
-    references user(id),
-    * foreign key (role_id)
-    references role(id),
-* );
-* */

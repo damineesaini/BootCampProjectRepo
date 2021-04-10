@@ -27,6 +27,9 @@ public class UnlockAccountToken {
     @JoinColumn(nullable = false,name = "user_id")
     private User user;
 
+    public UnlockAccountToken() {
+    }
+
     public UnlockAccountToken(User user) {
         this.user = user;
         Calendar calendar = Calendar.getInstance();

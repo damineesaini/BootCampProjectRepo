@@ -5,13 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/unlock")
 public class UnlockAccountController {
 
     @Autowired
     UnlockAccountService unlockAccountService;
 
-    @PostMapping("/unlock-account")
-    public String unlockAccount(@RequestBody String email){
+    @GetMapping("/unlock-account")
+    public String unlockAccount(@RequestParam("email") String email){
         return unlockAccountService.unlockAccount(email);
     }
 

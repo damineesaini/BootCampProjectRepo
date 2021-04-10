@@ -1,15 +1,15 @@
 package com.bootcamp.BootcampProject.dto.request;
 
-import com.bootcamp.BootcampProject.entity.product.Category;
+import com.bootcamp.BootcampProject.utility.ValidationRegex;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 public class CategoryDto {
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z ]*")
+    @Pattern(regexp = ValidationRegex.ISALPHA)
     @NotNull
     private String name;
-    private Category parentCategoryId;
+    private String parentCategoryName;
 
     public String getName() {
         return name;
@@ -19,11 +19,11 @@ public class CategoryDto {
         this.name = name;
     }
 
-    public Category getParentCategoryId() {
-        return parentCategoryId;
+    public String getParentCategoryId() {
+        return parentCategoryName;
     }
 
-    public void setParentCategoryId(Category parentCategoryId) {
-        this.parentCategoryId = parentCategoryId;
+    public void setParentCategoryId(String parentCategoryId) {
+        this.parentCategoryName = parentCategoryId;
     }
 }

@@ -6,9 +6,10 @@ import com.bootcamp.BootcampProject.entity.product.Category;
 import com.bootcamp.BootcampProject.entity.product.Product;
 import com.bootcamp.BootcampProject.entity.user.Seller;
 import com.bootcamp.BootcampProject.entity.user.User;
-import com.bootcamp.BootcampProject.exception.UserNotFoundException;
+import com.bootcamp.BootcampProject.exception.*;
 import com.bootcamp.BootcampProject.repository.CategoryRepository;
 import com.bootcamp.BootcampProject.repository.ProductRepository;
+import com.bootcamp.BootcampProject.repository.RoleRepository;
 import com.bootcamp.BootcampProject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
@@ -32,12 +33,21 @@ public class ProductService {
     UserRepository userRepository;
 
     @Autowired
+    RoleRepository roleRepository;
+
+    @Autowired
     EmailSendService emailSendService;
 
-    /**************************** Seller's API *********************************/
+    /**************************** Seller's API **********************************/
 
-    public List<Product> getAllProduct(){
-        return (List<Product>) productRepository.findAll();
+
+    public List<Product> getAllProduct() throws InactiveException {
+            if(productRepository.findAllNonDeletedActive().isEmpty()){
+                throw new InactiveException("No active products found");
+            }
+            else {
+                return productRepository.findAllNonDeletedActive();
+            }
     }
 
     public String saveProd(ProductRequestParams productRequestParams,Category category,Seller seller,User user){
@@ -52,40 +62,12 @@ public class ProductService {
         newProduct.setSellerUserId(seller);
         productRepository.save(newProduct);
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(user.getEmail());
+        message.setTo("damineesaini7@gmail.com");
         message.setFrom("damineesaini1111@gmail.com");
         message.setSubject("Product Inactive");
-        message.setText("Your product has been added but is waiting to be activated by the admin. the details of the product are:" + newProduct);
+        message.setText("A new product has been added but is waiting to be activated by the admin. The details of the product are: \n" +" category : "+ newProduct.getCategoryId().getName() +"\n brand : "+ newProduct.getBrand() +"\n name : "+ newProduct.getName() +"\n description : "+ newProduct.getDescription());
         emailSendService.sendEmail(message);
         return "Product Added Successfully";
-    }
-
-    public String createProduct(ProductRequestParams productRequestParams, Seller seller) throws Exception {
-        User user = userRepository.findById(seller.getUserId().getId()).get();
-        boolean isNameExist = productRepository.findByName(productRequestParams.getName()).isPresent();
-        if (isNameExist){
-            Product product = productRepository.findByName(productRequestParams.getName()).get();
-            if (product.getCategoryId().getName().equals(productRequestParams.getCategory()) && product.getBrand().equals(productRequestParams.getBrand())) {
-                return "Product already exists";
-            }
-            else{
-                return saveProd(productRequestParams,product.getCategoryId(),seller,user);
-            }
-        }
-        else {
-            if (categoryRepository.findByName(productRequestParams.getCategory()) != null) {
-                Category category = categoryRepository.findByName(productRequestParams.getCategory());
-                if (!category.isHasChild()) {
-                    return saveProd(productRequestParams, category, seller, user);
-                }
-                else {
-                    throw new Exception("Category is a parent category");
-                }
-            }
-            else {
-                throw new Exception("Category is invalid");
-            }
-        }
     }
 
     public String addNewProduct(ProductRequestParams productRequestParams, Seller seller) throws Exception, UserNotFoundException {
@@ -96,7 +78,7 @@ public class ProductService {
             if (productRepository.findByName(productRequestParams.getName()).isPresent()) {
                 Product existProduct = productRepository.findByName(productRequestParams.getName()).get();
                 if (existProduct.getCategoryId().getName().equals(productRequestParams.getCategory())) {
-                    if (user.equals(existProduct.getSellerUserId()) && existProduct.getBrand().equals(productRequestParams.getBrand())) {
+                    if (user.equals(existProduct.getSellerUserId().getUserId()) && existProduct.getBrand().equals(productRequestParams.getBrand())) {
                         return "Product already exist";
                     }
                     else {
@@ -132,23 +114,28 @@ public class ProductService {
         }
     }
 
-    public Product viewProductById(UUID productId, Seller seller) throws Exception {
+    public Product viewProductById(UUID productId, Seller seller) throws DoesNotExistException, UnauthorizedAccessException, ProductNotFoundException {
         if(productRepository.findById(productId).isPresent()){
             Product product=productRepository.findById(productId).get();
             if (seller.equals(product.getSellerUserId())){
-                return product;
+                if (!product.isDelete()){
+                    return product;
+                }
+                else {
+                    throw new DoesNotExistException("Trying to access a deleted product");
+                }
             }
             else {
-                throw new Exception("Unable to access.You are not seller of this product.");
+                throw new UnauthorizedAccessException("Unable to access.You are not seller of this product.");
             }
         }
         else {
-            throw new Exception("Product does not exist");
+            throw new ProductNotFoundException("Product does not exist");
         }
     }
     @Transactional
     @Modifying
-    public String updateProductById(ProductUpdate productUpdate, UUID productId, Seller seller) throws Exception {
+    public String updateProductById(ProductUpdate productUpdate, UUID productId, Seller seller) throws UnauthorizedAccessException, ProductNotFoundException {
         if(productRepository.findById(productId).isPresent()){
             Product product=productRepository.findById(productId).get();
             if (seller.equals(product.getSellerUserId())){
@@ -160,16 +147,16 @@ public class ProductService {
                     return "product updated successfully";
             }
             else {
-                throw new Exception("Unable to access.You are not seller of this product.");
+                throw new UnauthorizedAccessException("Unable to access.You are not seller of this product.");
             }
         }
         else {
-            throw new Exception("Product does not exist");
+            throw new ProductNotFoundException("Product does not exist");
         }
     }
     @Transactional
     @Modifying
-    public String deleteProductById(UUID productId, Seller seller) throws Exception {
+    public String deleteProductById(UUID productId, Seller seller) throws UnauthorizedAccessException, ProductNotFoundException {
         if(productRepository.findById(productId).isPresent()){
             Product product=productRepository.findById(productId).get();
             if (seller.equals(product.getSellerUserId())){
@@ -178,27 +165,27 @@ public class ProductService {
                 return "product deleted successfully";
             }
             else {
-                throw new Exception("Unable to access.You are not seller of this product.");
+                throw new UnauthorizedAccessException("Unable to access.You are not seller of this product.");
             }
         }
         else {
-            throw new Exception("Product does not exist");
+            throw new ProductNotFoundException("Product does not exist");
         }
     }
 
     /**************************** Customer's API *********************************/
 
-    public Product viewProduct(UUID productId) throws Exception {
+    public Product viewProduct(UUID productId) throws ProductNotFoundException {
         if(productRepository.findById(productId).isPresent()){
             Product product=productRepository.findById(productId).get();
             return product;
         }
         else {
-            throw new Exception("Product does not exist");
+            throw new ProductNotFoundException("Product does not exist");
         }
     }
 
-    public List<Product> viewSimilarProduct(UUID productId) throws Exception {
+    public List<Product> viewSimilarProduct(UUID productId) throws  ProductNotFoundException {
         if(productRepository.findById(productId).isPresent()){
             Product product=productRepository.findById(productId).get();
             String brand = product.getBrand();
@@ -206,7 +193,7 @@ public class ProductService {
             return products;
         }
         else {
-            throw new Exception("Product does not exist");
+            throw new ProductNotFoundException("Product does not exist");
         }
     }
 
@@ -224,17 +211,17 @@ public class ProductService {
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setTo(product.getSellerUserId().getUserId().getEmail());
                 message.setFrom("damineesaini11@gmail.com");
-                message.setSubject("Account Activated");
-                message.setText("Your account is successfully activated");
+                message.setSubject("Product Activated");
+                message.setText("Your product is successfully activated");
                 emailSendService.sendEmail(message);
-                return "User Activated";
+                return "Product Activated";
             }
             else {
-                return "Account is already activated";
+                return "Product is already activated";
             }
         }
         else {
-            throw new UserNotFoundException("Incorrect user id");
+            throw new UserNotFoundException("Incorrect product id");
         }
     }
 
@@ -263,12 +250,12 @@ public class ProductService {
         }
     }
 
-    public List<Product> getAllProductByCategory(UUID categoryId) throws Exception {
+    public List<Product> getAllProductByCategory(UUID categoryId) throws NotChildCategoryException, CategoryNotFoundException {
         List<Product> validProducts = new ArrayList<>();
       if (categoryRepository.findById(categoryId).isPresent()){
           Category category = categoryRepository.findById(categoryId).get();
           if (!category.isHasChild()){
-              List<Product> products = productRepository.findAllByCategoryId(category);
+              List<Product> products = productRepository.findAllByCategoryId(categoryId);
               for (Product product: products) {
                   if (product.isActive() && !product.isDelete()){
                       if (product.getProductVariationId()!=null){
@@ -279,11 +266,11 @@ public class ProductService {
               return validProducts;
           }
           else {
-              throw new Exception("category has child. please specify a particular child category");
+              throw new NotChildCategoryException("category has child. please specify a particular child category");
           }
       }
       else {
-          throw new Exception("category does not exist.Invalid category id passed");
+          throw new CategoryNotFoundException("category does not exist.Invalid category id passed");
       }
     }
 }

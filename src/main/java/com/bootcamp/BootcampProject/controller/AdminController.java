@@ -1,6 +1,5 @@
 package com.bootcamp.BootcampProject.controller;
 
-import com.bootcamp.BootcampProject.entity.user.Seller;
 import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -33,7 +31,7 @@ public class AdminController {
     }
 
     @GetMapping("/allSeller")
-    public List<Seller> retrieveAllSeller(){
+    public MappingJacksonValue retrieveAllSeller(){
         return adminService.findAllSeller();
     }
 

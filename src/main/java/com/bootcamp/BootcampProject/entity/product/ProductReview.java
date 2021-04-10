@@ -55,16 +55,3 @@ public class ProductReview {
         this.productId = productId;
     }
 }
-
-/*
-* create table product_review(
-*   customer_user_id int,
-*   review varchar(100),
-*   rating int,
-*   product_id int,
-* foreign key (customer_user_id)
-    references customer(user_id),
-    * foreign key (product_id)
-    references product(id)
-* );
-* */

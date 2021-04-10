@@ -1,7 +1,11 @@
 package com.bootcamp.BootcampProject.dto.request;
 
+import javax.validation.constraints.NotNull;
+
 public class ProductUpdate {
+    @NotNull
     private String name;
+    @NotNull
     private String description;
     private boolean isCancellable;
     private boolean isReturnable;

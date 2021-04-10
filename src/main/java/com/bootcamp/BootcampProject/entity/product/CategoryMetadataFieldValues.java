@@ -1,5 +1,6 @@
 package com.bootcamp.BootcampProject.entity.product;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -13,8 +14,9 @@ public class CategoryMetadataFieldValues {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
-    @OneToOne(targetEntity = CategoryMetadataField.class,cascade = CascadeType.ALL)
-    @JoinColumn(name = "category_metadata_field_id")
+    @JsonBackReference
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="category_metadata_field_id")
     private CategoryMetadataField categoryMetadataFieldId;
     @OneToOne(targetEntity = Category.class,cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id")
@@ -47,14 +49,4 @@ public class CategoryMetadataFieldValues {
     }
 }
 
-/*
- * create table category_metadata_field_values(
- *   category_metadata_field_id int,
- *   category_id int,
- *   values varchar(50)
- * foreign key (category_metadata_field_id)
-    references category_metadata_field(id),
-    * foreign key (category_id)
-    references category(id)
- * );
- * */
+

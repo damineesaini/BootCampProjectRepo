@@ -8,7 +8,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
-import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
@@ -23,23 +22,10 @@ public class LockAccountAuthManager implements ApplicationListener<AbstractAuthe
 
     @Override
     public void onApplicationEvent(AbstractAuthenticationEvent abstractAuthenticationEvent){
-        if (abstractAuthenticationEvent instanceof AuthenticationSuccessEvent){
-            AuthenticationSuccessEvent event = (AuthenticationSuccessEvent) abstractAuthenticationEvent;
-            String email = (String) event.getAuthentication().getPrincipal();
-            if (userRepository.findByEmail(email)!=null){
-                User user = userRepository.findByEmail(email);
-                user.setLoginAttempts(0);
-                user.setLocked(false);
-                userRepository.save(user);
-            }
-            else {
-                throw new UsernameNotFoundException("invalid email");
-            }
-        }
 
         if (abstractAuthenticationEvent instanceof AuthenticationFailureBadCredentialsEvent){
             AuthenticationFailureBadCredentialsEvent event = (AuthenticationFailureBadCredentialsEvent) abstractAuthenticationEvent;
-            String email = (String) event.getAuthentication().getPrincipal();
+            String email = event.getAuthentication().getPrincipal().toString();
             if (userRepository.findByEmail(email)!=null) {
                 User user = userRepository.findByEmail(email);
                 if (user.getLoginAttempts()>=2){
@@ -48,7 +34,7 @@ public class LockAccountAuthManager implements ApplicationListener<AbstractAuthe
                     message.setTo(user.getEmail());
                     message.setFrom("damineesaini1111@gmail.com");
                     message.setSubject("Account Locked");
-                    message.setText("To unlock your account, please click here:"+"http://localhost:8080/unlock-account/"+user.getEmail());
+                    message.setText("To unlock your account, please click here:"+"http://localhost:8080/unlock/unlock-account?email="+user.getEmail());
                     emailSendService.sendEmail(message);
                 }
                 else {
