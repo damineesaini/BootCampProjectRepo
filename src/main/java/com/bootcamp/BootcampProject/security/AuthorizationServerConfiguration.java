@@ -71,28 +71,4 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         authorizationServerSecurityConfigurer.allowFormAuthenticationForClients();
     }
 
-//    @EventListener
-//    public void authFailedEventListener(AbstractAuthenticationFailureEvent abstractAuthenticationFailureEvent){
-////            String email = abstractAuthenticationFailureEvent.getAuthentication().getPrincipal().toString();
-////            if (userRepository.findByEmail(email)!=null) {
-////                User user = userRepository.findByEmail(email);
-////                if (user.getLoginAttempts()>=2){
-////                    user.setLocked(true);
-////                    SimpleMailMessage message = new SimpleMailMessage();
-////                    message.setTo(user.getEmail());
-////                    message.setFrom("damineesaini1111@gmail.com");
-////                    message.setSubject("Account Locked");
-////                    message.setText("To unlock your account, please click here:"+"http://localhost:8080/unlock-account/"+user.getEmail());
-////                    emailSendService.sendEmail(message);
-////                }
-////                else {
-////                    user.setLoginAttempts(user.getLoginAttempts()+1);
-////                }
-////                userRepository.save(user);
-////            }
-////            else {
-////                throw new UsernameNotFoundException("invalid email");
-////            }
-//        System.out.println(abstractAuthenticationFailureEvent.getAuthentication().getPrincipal());
-//        }
 }
