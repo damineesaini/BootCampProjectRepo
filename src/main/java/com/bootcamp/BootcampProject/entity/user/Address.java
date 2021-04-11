@@ -1,6 +1,7 @@
 package com.bootcamp.BootcampProject.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -8,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "address")
-//@JsonFilter("addressFilter")
+@JsonFilter("addressFilter")
 public class Address {
     @Id
     @GeneratedValue(generator = "uuid2")

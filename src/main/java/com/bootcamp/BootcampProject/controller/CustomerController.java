@@ -29,7 +29,7 @@ public class CustomerController {
     private TokenStore tokenStore;
 
     @GetMapping("/profile")
-    public MappingJacksonValue customerProfile(){
+    public MappingJacksonValue customerProfile() throws UserNotFoundException {
      return customerService.getProfile();
     }
 
@@ -39,7 +39,7 @@ public class CustomerController {
     }
 
     @PutMapping("/update-profile")
-    public String updateProfile(@RequestBody CustomerUpdate customerUpdate, HttpServletResponse response) throws UserNotFoundException {
+    public String updateProfile(@Valid @RequestBody CustomerUpdate customerUpdate, HttpServletResponse response) throws UserNotFoundException {
         Customer customer = customerService.getLoggedInCustomer();
         UUID id =customer.getUserId().getId();
         String message = customerService.updateCustomerProfile(customerUpdate,id);
@@ -47,7 +47,7 @@ public class CustomerController {
     }
 
     @PostMapping("/add-address")
-    public String addAddress(@RequestBody NewAddress newAddress, HttpServletResponse response) throws UserNotFoundException {
+    public String addAddress(@Valid @RequestBody NewAddress newAddress, HttpServletResponse response) throws UserNotFoundException {
         Customer customer = customerService.getLoggedInCustomer();
         UUID id = customer.getUserId().getId();
         String message = customerService.addAddress(newAddress,id);
@@ -55,7 +55,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/delete-address/{addressId}")
-    public String deleteAddress(@PathVariable String addressId,HttpServletResponse response) throws DoesNotExistException {
+    public String deleteAddress(@Valid @PathVariable String addressId,HttpServletResponse response) throws DoesNotExistException, UserNotFoundException {
         UUID addressid = UUID.fromString(addressId);
         Customer customer = customerService.getLoggedInCustomer();
         UUID id =customer.getUserId().getId();
@@ -64,7 +64,7 @@ public class CustomerController {
     }
 
     @PutMapping("/update-address/{addressId}")
-    public String updateAddress(@Valid @RequestBody NewAddress newAddress, @PathVariable String addressId, HttpServletResponse response) throws DoesNotExistException {
+    public String updateAddress(@Valid @RequestBody NewAddress newAddress, @PathVariable String addressId, HttpServletResponse response) throws DoesNotExistException, UserNotFoundException {
         UUID addressid = UUID.fromString(addressId);
         Customer customer = customerService.getLoggedInCustomer();
         UUID id =customer.getUserId().getId();
@@ -94,7 +94,5 @@ public class CustomerController {
         }
         return "Logged out successfully";
     }
-
-
 
 }

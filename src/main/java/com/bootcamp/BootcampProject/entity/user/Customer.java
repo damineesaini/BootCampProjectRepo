@@ -1,16 +1,21 @@
 package com.bootcamp.BootcampProject.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
 @Table(name = "customer")
+@JsonFilter("customerFilter")
 public class Customer{
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
+    @JsonProperty
     private UUID id;
     @OneToOne(targetEntity = User.class,cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")

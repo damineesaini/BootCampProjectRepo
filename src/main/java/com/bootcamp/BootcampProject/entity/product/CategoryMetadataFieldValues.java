@@ -1,6 +1,6 @@
 package com.bootcamp.BootcampProject.entity.product;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -8,13 +8,13 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "category_metadata_field_value")
+@JsonFilter("metadataValueFilter")
 public class CategoryMetadataFieldValues {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
-    @JsonBackReference
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="category_metadata_field_id")
     private CategoryMetadataField categoryMetadataFieldId;

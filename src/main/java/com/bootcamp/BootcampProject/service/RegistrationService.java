@@ -87,6 +87,9 @@ public class RegistrationService {
 
               User userExists = userRepository.findByEmail(sellerRegister.getEmail());
         if (userExists != null) throw new AlreadyExistException("User is already registered with the given email");
+        else if(sellerRepository.findByCompanyName(sellerRegister.getCompanyName())!=null){
+            throw new AlreadyExistException("THe company name already exist under another seller name. PLease recheck.");
+        }
         else {
             Seller newSeller = new Seller();
             User newUser = new User();

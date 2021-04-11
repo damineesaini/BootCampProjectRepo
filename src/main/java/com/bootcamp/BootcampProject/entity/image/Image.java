@@ -2,6 +2,7 @@ package com.bootcamp.BootcampProject.entity.image;
 
 import com.bootcamp.BootcampProject.entity.user.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity
+@JsonFilter("imageFilter")
 public class Image {
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -25,6 +27,9 @@ public class Image {
     private Date createDate;
     @Lob
     private  byte[] data;
+
+    public Image() {
+    }
 
     public Image(String originalFilename, String contentType, byte[] bytes) {
         this.filename=originalFilename;

@@ -80,21 +80,21 @@ public class AdminService {
     }
 
     public MappingJacksonValue findAllCustomer() {
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id","firstName","lastName","email","isActive");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter",filter);
+        SimpleBeanPropertyFilter filterUser = SimpleBeanPropertyFilter.filterOutAllExcept("id","firstName","middleName","lastName","email","isActive");
+        SimpleBeanPropertyFilter filterCustomer = SimpleBeanPropertyFilter.filterOutAllExcept("userId");
+        FilterProvider filters = new SimpleFilterProvider().addFilter("customerFilter",filterCustomer).addFilter("userFilter",filterUser);
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(customerRepository.findAll());
         mappingJacksonValue.setFilters(filters);
         return mappingJacksonValue;
-//        CustomerResponseDto customerResponseDto =new CustomerResponseDto();
-//        customerResponseDto.setId();
     }
 
 
 
     public MappingJacksonValue findAllSeller() {
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id","firstName","lastName","email","isActive","addresses");
-        SimpleBeanPropertyFilter filter1 = SimpleBeanPropertyFilter.filterOutAllExcept("addressLine","city","state","country","zipcode","label");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter",filter).addFilter("addressFilter",filter1);
+        SimpleBeanPropertyFilter filterUser = SimpleBeanPropertyFilter.filterOutAllExcept("id","firstName","lastName","email","isActive","addresses");
+        SimpleBeanPropertyFilter filterAddress = SimpleBeanPropertyFilter.filterOutAllExcept("addressLine","city","state","country","zipcode");
+        SimpleBeanPropertyFilter filterSeller = SimpleBeanPropertyFilter.filterOutAllExcept("companyName","companyContactNo","userId");
+        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter",filterUser).addFilter("addressFilter",filterAddress).addFilter("sellerFilter",filterSeller);
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(sellerRepository.findAll());
         mappingJacksonValue.setFilters(filters);
         return mappingJacksonValue;

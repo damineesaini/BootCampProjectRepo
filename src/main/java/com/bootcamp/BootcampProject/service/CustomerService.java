@@ -41,28 +41,36 @@ public class CustomerService {
     @Autowired
     private EmailSendService emailSendService;
 
-    public Customer getLoggedInCustomer(){
+    public Customer getLoggedInCustomer() throws UserNotFoundException {
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
 
         AppUserDetails appUserDetails = (AppUserDetails) authentication.getPrincipal();
         String username= appUserDetails.getUsername();
-        User user = userRepository.findByEmail(username);
-        return  customerRepository.findByUserId(user);
+        if (userRepository.findByEmail(username)!=null){
+            User user = userRepository.findByEmail(username);
+            return  customerRepository.findByUserId(user);
+        }
+        else {
+            throw new UserNotFoundException("invalid email. User not found.");
+        }
+
     }
 
-    public MappingJacksonValue getProfile(){
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("firstName","lastName","email","addresses");
-        SimpleBeanPropertyFilter filter1 = SimpleBeanPropertyFilter.filterOutAllExcept("addressLine","city","state","country","zipcode","label");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter",filter).addFilter("addressFilter",filter1);
+    public MappingJacksonValue getProfile() throws UserNotFoundException {
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("firstName","lastName","email","isActive","profileImage");
+        SimpleBeanPropertyFilter filter1 = SimpleBeanPropertyFilter.filterOutAllExcept("id","userId","contact");
+        SimpleBeanPropertyFilter filter2 =SimpleBeanPropertyFilter.filterOutAllExcept("filename","path");
+        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter",filter).addFilter("customerFilter",filter1).addFilter("imageFilter",filter2);
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(getLoggedInCustomer());
         mappingJacksonValue.setFilters(filters);
         return mappingJacksonValue;
     }
 
-    public MappingJacksonValue getAddress(){
+    public MappingJacksonValue getAddress() throws UserNotFoundException {
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("addresses");
         SimpleBeanPropertyFilter filter1 = SimpleBeanPropertyFilter.filterOutAllExcept("addressLine","city","state","country","zipcode","label");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter",filter).addFilter("addressFilter",filter1);
+        SimpleBeanPropertyFilter filter2 = SimpleBeanPropertyFilter.filterOutAllExcept("userId");
+        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter",filter).addFilter("addressFilter",filter1).addFilter("customerFilter",filter2);
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(getLoggedInCustomer());
         mappingJacksonValue.setFilters(filters);
         return mappingJacksonValue;

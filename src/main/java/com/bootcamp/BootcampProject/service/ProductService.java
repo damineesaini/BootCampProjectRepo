@@ -11,8 +11,12 @@ import com.bootcamp.BootcampProject.repository.CategoryRepository;
 import com.bootcamp.BootcampProject.repository.ProductRepository;
 import com.bootcamp.BootcampProject.repository.RoleRepository;
 import com.bootcamp.BootcampProject.repository.UserRepository;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
@@ -41,12 +45,21 @@ public class ProductService {
     /**************************** Seller's API **********************************/
 
 
-    public List<Product> getAllProduct() throws InactiveException {
+    public MappingJacksonValue getAllProductForSeller(Seller seller) throws InactiveException, DoesNotExistException {
             if(productRepository.findAllNonDeletedActive().isEmpty()){
                 throw new InactiveException("No active products found");
             }
+            else if(productRepository.findBySellerUserId(seller).isEmpty()){
+                throw new DoesNotExistException("no products found");
+            }
             else {
-                return productRepository.findAllNonDeletedActive();
+                SimpleBeanPropertyFilter filter4 = SimpleBeanPropertyFilter.filterOutAllExcept("id","name","description","brand","isActive","isDelete","isCancellable","isReturnable","categoryId");
+                SimpleBeanPropertyFilter filterCategory = SimpleBeanPropertyFilter.filterOutAllExcept("name","hasChild","isActive","parentCategoryId");
+                FilterProvider filters = new SimpleFilterProvider().addFilter("productFilter",filter4).addFilter("categoryFilter",filterCategory);
+
+                MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(productRepository.findAllNonDeletedActive());
+                mappingJacksonValue.setFilters(filters);
+                return mappingJacksonValue;
             }
     }
 
@@ -114,12 +127,17 @@ public class ProductService {
         }
     }
 
-    public Product viewProductById(UUID productId, Seller seller) throws DoesNotExistException, UnauthorizedAccessException, ProductNotFoundException {
+    public MappingJacksonValue viewProductById(UUID productId, Seller seller) throws DoesNotExistException, UnauthorizedAccessException, ProductNotFoundException {
         if(productRepository.findById(productId).isPresent()){
             Product product=productRepository.findById(productId).get();
             if (seller.equals(product.getSellerUserId())){
                 if (!product.isDelete()){
-                    return product;
+                    SimpleBeanPropertyFilter filter4 = SimpleBeanPropertyFilter.filterOutAllExcept("name","description","brand","isActive","isDelete","isCancellable","isReturnable","categoryId");
+                    SimpleBeanPropertyFilter filterCategory = SimpleBeanPropertyFilter.filterOutAllExcept("name","hasChild","isActive","parentCategoryId");
+                    FilterProvider filters = new SimpleFilterProvider().addFilter("productFilter",filter4).addFilter("categoryFilter",filterCategory);
+                    MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(product);
+                    mappingJacksonValue.setFilters(filters);
+                    return mappingJacksonValue;
                 }
                 else {
                     throw new DoesNotExistException("Trying to access a deleted product");
@@ -173,24 +191,67 @@ public class ProductService {
         }
     }
 
-    /**************************** Customer's API *********************************/
+    /**************************** Customer's API **********************************/
 
-    public Product viewProduct(UUID productId) throws ProductNotFoundException {
+    public MappingJacksonValue viewProduct(UUID productId) throws ProductNotFoundException {
         if(productRepository.findById(productId).isPresent()){
             Product product=productRepository.findById(productId).get();
-            return product;
+            SimpleBeanPropertyFilter filterCategory = SimpleBeanPropertyFilter.filterOutAllExcept("name","hasChild","isActive","parentCategoryId");
+            SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id","quantityAvailable","price","productMetadata","productImage");
+            SimpleBeanPropertyFilter filter4 = SimpleBeanPropertyFilter.filterOutAllExcept("name","description","brand","isActive","isDelete","isCancellable","isReturnable","categoryId","productVariationId");
+            FilterProvider filters = new SimpleFilterProvider().addFilter("productFilter",filter4).addFilter("productVariationFilter",filter).addFilter("categoryFilter",filterCategory);
+            MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(product);
+            mappingJacksonValue.setFilters(filters);
+            return mappingJacksonValue;
         }
         else {
             throw new ProductNotFoundException("Product does not exist");
         }
     }
 
-    public List<Product> viewSimilarProduct(UUID productId) throws  ProductNotFoundException {
+    public MappingJacksonValue getAllProductByCategory(UUID categoryId) throws NotChildCategoryException, CategoryNotFoundException {
+        List<Product> validProducts = new ArrayList<>();
+        if (categoryRepository.findById(categoryId).isPresent()){
+            Category category = categoryRepository.findById(categoryId).get();
+            if (!category.isHasChild()){
+                List<Product> products = productRepository.findAllByCategoryId(categoryId);
+                for (Product product: products) {
+                    if (product.isActive() && !product.isDelete()){
+                        if (product.getProductVariationId()!=null){
+                            validProducts.add(product);
+                        }
+                    }
+                }
+                SimpleBeanPropertyFilter filterCategory = SimpleBeanPropertyFilter.filterOutAllExcept("name","hasChild","isActive","parentCategoryId");
+                SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id","quantityAvailable","price","productMetadata","productImage");
+                SimpleBeanPropertyFilter filter4 = SimpleBeanPropertyFilter.filterOutAllExcept("name","description","brand","isActive","isDelete","isCancellable","isReturnable","categoryId","productVariationId");
+                FilterProvider filters = new SimpleFilterProvider().addFilter("productFilter",filter4).addFilter("productVariationFilter",filter).addFilter("categoryFilter",filterCategory);
+                MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(validProducts);
+                mappingJacksonValue.setFilters(filters);
+                return mappingJacksonValue;
+            }
+            else {
+                throw new NotChildCategoryException("category has child. please specify a particular child category");
+            }
+        }
+        else {
+            throw new CategoryNotFoundException("category does not exist.Invalid category id passed");
+        }
+    }
+
+    public MappingJacksonValue viewSimilarProduct(UUID productId) throws  ProductNotFoundException {
         if(productRepository.findById(productId).isPresent()){
             Product product=productRepository.findById(productId).get();
             String brand = product.getBrand();
             List<Product> products = productRepository.findAllByBrand(brand);
-            return products;
+            SimpleBeanPropertyFilter filterCategory = SimpleBeanPropertyFilter.filterOutAllExcept("name","hasChild","isActive","parentCategoryId");
+            SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id","quantityAvailable","price","productMetadata","productImage");
+            SimpleBeanPropertyFilter filter4 = SimpleBeanPropertyFilter.filterOutAllExcept("name","description","brand","isActive","isDelete","isCancellable","isReturnable","categoryId","productVariationId");
+            FilterProvider filters = new SimpleFilterProvider().addFilter("productFilter",filter4).addFilter("productVariationFilter",filter).addFilter("categoryFilter",filterCategory);
+            MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(products);
+            mappingJacksonValue.setFilters(filters);
+            return mappingJacksonValue;
+//            return products;
         }
         else {
             throw new ProductNotFoundException("Product does not exist");
@@ -250,27 +311,21 @@ public class ProductService {
         }
     }
 
-    public List<Product> getAllProductByCategory(UUID categoryId) throws NotChildCategoryException, CategoryNotFoundException {
-        List<Product> validProducts = new ArrayList<>();
-      if (categoryRepository.findById(categoryId).isPresent()){
-          Category category = categoryRepository.findById(categoryId).get();
-          if (!category.isHasChild()){
-              List<Product> products = productRepository.findAllByCategoryId(categoryId);
-              for (Product product: products) {
-                  if (product.isActive() && !product.isDelete()){
-                      if (product.getProductVariationId()!=null){
-                          validProducts.add(product);
-                      }
-                  }
-              }
-              return validProducts;
-          }
-          else {
-              throw new NotChildCategoryException("category has child. please specify a particular child category");
-          }
-      }
-      else {
-          throw new CategoryNotFoundException("category does not exist.Invalid category id passed");
-      }
+
+
+    public MappingJacksonValue getAllProduct() throws InactiveException {
+        if(productRepository.findAllNonDeletedActive().isEmpty()){
+            throw new InactiveException("No active products found");
+        }
+        else {
+            SimpleBeanPropertyFilter filterCategory = SimpleBeanPropertyFilter.filterOutAllExcept("name","hasChild","isActive","parentCategoryId");
+            SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id","quantityAvailable","price","productMetadata","productImage");
+            SimpleBeanPropertyFilter filter4 = SimpleBeanPropertyFilter.filterOutAllExcept("name","description","brand","isActive","isDelete","isCancellable","isReturnable","categoryId","productVariationId");
+            FilterProvider filters = new SimpleFilterProvider().addFilter("productFilter",filter4).addFilter("productVariationFilter",filter).addFilter("categoryFilter",filterCategory);
+            MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(productRepository.findAllNonDeletedActive());
+            mappingJacksonValue.setFilters(filters);
+            return mappingJacksonValue;
+        }
     }
 }
+

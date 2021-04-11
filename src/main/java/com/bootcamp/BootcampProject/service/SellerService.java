@@ -49,18 +49,11 @@ public class SellerService {
     }
 
     public MappingJacksonValue getProfile(){
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("firstName","lastName","email","addresses");
+        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("firstName","lastName","email","addresses","profileImage");
         SimpleBeanPropertyFilter filter1 = SimpleBeanPropertyFilter.filterOutAllExcept("addressLine","city","state","country","zipcode");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter",filter).addFilter("addressFilter",filter1);
-        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(getLoggedInSeller());
-        mappingJacksonValue.setFilters(filters);
-        return mappingJacksonValue;
-    }
-
-    public MappingJacksonValue getAddress(){
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("addresses");
-        SimpleBeanPropertyFilter filter1 = SimpleBeanPropertyFilter.filterOutAllExcept("addressLine","city","state","country","zipcode");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter",filter).addFilter("addressFilter",filter1);
+        SimpleBeanPropertyFilter filter2 = SimpleBeanPropertyFilter.filterOutAllExcept("id","userId","companyName","companyContactNo","gst");
+        SimpleBeanPropertyFilter filter3 =SimpleBeanPropertyFilter.filterOutAllExcept("filename","path");
+        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter",filter).addFilter("addressFilter",filter1).addFilter("sellerFilter",filter2).addFilter("imageFilter",filter3);
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(getLoggedInSeller());
         mappingJacksonValue.setFilters(filters);
         return mappingJacksonValue;
@@ -123,6 +116,8 @@ else {
         return "address updated successfully";
     }
 
+    @Transactional
+    @Modifying
     public String updatePassword(UpdatePasswordDto updatePasswordDto , UUID id) {
         if (userRepository.findById(id).isPresent()) {
             User user = userRepository.findById(id).get();

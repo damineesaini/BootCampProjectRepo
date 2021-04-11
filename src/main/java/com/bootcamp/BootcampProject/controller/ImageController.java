@@ -5,6 +5,7 @@ import com.bootcamp.BootcampProject.entity.product.ProductVariation;
 import com.bootcamp.BootcampProject.entity.user.Customer;
 import com.bootcamp.BootcampProject.entity.user.Seller;
 import com.bootcamp.BootcampProject.exception.DoesNotExistException;
+import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.repository.ProductVariationRepository;
 import com.bootcamp.BootcampProject.service.CustomerService;
 import com.bootcamp.BootcampProject.service.ImageService;
@@ -17,7 +18,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,7 +46,7 @@ public class ImageController {
 
 
     @PostMapping("/customer/uploadIMage")
-    public ResponseEntity<Object> uploadCustomerProfileImage(@RequestBody MultipartFile file) throws Exception {
+    public ResponseEntity<Object> uploadCustomerProfileImage(@RequestBody MultipartFile file) throws Exception, UserNotFoundException {
         Customer customer = customerService.getLoggedInCustomer();
         if (file.isEmpty()){
             throw new Exception("Upload image please!");
@@ -110,7 +110,7 @@ public class ImageController {
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
             Image image =new Image(file.getOriginalFilename(),file.getContentType(),file.getBytes());
-            image.setFilename(seller.getUserId().getId().toString()+"."+extension);
+            image.setFilename(seller.getUserId().getId().toString()+extension);
             image.setPath(targetLocation.toString());
             image.setCreateDate(new Date());
                 image.setUserId(seller.getUserId());
@@ -127,8 +127,8 @@ public class ImageController {
         }
     }
 
-    @PostMapping("/profile/uploadProductVariationImage")
-    public String uploadProductVariationImage(@RequestParam("file") MultipartFile file, @Param("productVariationId") String productVariationId) throws Exception, DoesNotExistException {
+    @PostMapping("/seller/uploadProductVariationImage")
+    public ResponseEntity<Object> uploadProductVariationImage(@RequestParam("file") MultipartFile file, @Param("productVariationId") String productVariationId) throws Exception, DoesNotExistException {
         if (file.isEmpty()) {
             throw new IOException("Upload Image");
         }
@@ -138,34 +138,38 @@ public class ImageController {
             Seller seller = sellerService.getLoggedInSeller();
             String message=null;
             try {
-                String extension = null;
-                byte[] bytes = file.getBytes();
-                extension = file.getOriginalFilename().split("\\.")[1];
-                if (extension.equals("jpeg") || extension.equals("png") || extension.equals("jpg")) {
-                    File newPath = new File(FOLDER_PATH + "/products" + "/variations");
-                    if (!newPath.exists()) {
-                        if (newPath.mkdirs()) {
-                            System.out.println("New directory created");
-                        } else {
-                            System.out.println("Failed to create new folder");
-                        }
-                    }
-                    UUID id = UUID.randomUUID();
-                    Path path = Paths.get(newPath.toString() + "/" + id + "." + extension);
-                    Files.write(path, bytes);
-                    Image image = new Image(file.getOriginalFilename(), file.getContentType(), file.getBytes());
-                    image.setFilename(id.toString() + "." + extension);
-                    image.setPath(path.toString());
+                Path fileStorageLocation = Paths.get(FOLDER_PATH).toAbsolutePath().normalize();
+                System.out.println(fileStorageLocation);
+                String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
+                System.out.println(originalFileName);
+                String fileName = "";
+                String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+                System.out.println(extension);
+
+                if (extension.equals(".jpeg")||extension.equals(".jpg")||extension.equals(".png")){
+                    fileName= prodId + extension;
+                    System.out.println(fileName);
+                    System.out.println(fileStorageLocation.resolve("/products/variations"));
+                    Path targetLocation = fileStorageLocation.resolve(fileName);
+                    System.out.println(targetLocation);
+                    Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+                    Image image =new Image(file.getOriginalFilename(),file.getContentType(),file.getBytes());
+                    image.setFilename(prodId.toString()+extension);
+                    image.setPath(targetLocation.toString());
                     image.setCreateDate(new Date());
                     image.setUserId(seller.getUserId());
-                    productVariation.setProductImage(image);
-                    productVariationRepository.save(productVariation);
-                    message = imageService.saveProductVariationImage(image, id);
+
+                     message = imageService.saveImage(image,prodId);
+                    return new ResponseEntity<>(message, HttpStatus.CREATED);
                 }
-            } catch (IOException e) {
+                else {
+                    throw new Exception("Invalid file format. Kindly use jpg,jpeg and png");
+                }
+            }catch (IOException e){
                 e.printStackTrace();
+                throw e;
             }
-            return message;
         }
         else {
             throw new DoesNotExistException("product variation with given id does not exist.");

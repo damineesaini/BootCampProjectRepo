@@ -1,6 +1,7 @@
 package com.bootcamp.BootcampProject.repository;
 
 import com.bootcamp.BootcampProject.entity.product.Product;
+import com.bootcamp.BootcampProject.entity.user.Seller;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -28,4 +29,5 @@ public interface ProductRepository extends CrudRepository<Product, UUID> {
     @Query(value = "Select Distinct brand from product where category_id=:categoryId",nativeQuery = true)
     Set<Object> findAllBrandsByCategoryId(@Param("categoryId") UUID categoryId);
 
+    List<Product> findBySellerUserId(Seller seller);
 }

@@ -32,12 +32,4 @@ public class CategoryDetailResponse {
         this.price = price;
     }
 
-//    public void addMetadata(MetadataValueResponse metadataValueResponse){
-//        if (metadataValueResponse!=null) {
-//            if (metadata==null) {
-//                metadata = new ArrayList<>();
-//            }
-//            metadata.add(metadataValueResponse);
-//        }
-//    }
 }

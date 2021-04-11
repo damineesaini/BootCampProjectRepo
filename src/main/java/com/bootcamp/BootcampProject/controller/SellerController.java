@@ -51,7 +51,7 @@ public class SellerController {
     }
 
     @PutMapping("/update-password")
-    public String updateAddress(@RequestBody UpdatePasswordDto updatePasswordDto){
+    public String updateAddress(@Valid @RequestBody UpdatePasswordDto updatePasswordDto){
         Seller seller = sellerService.getLoggedInSeller();
         UUID id =seller.getUserId().getId();
         String message = sellerService.updatePassword(updatePasswordDto,id);

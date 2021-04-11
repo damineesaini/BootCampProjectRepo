@@ -1,6 +1,7 @@
 package com.bootcamp.BootcampProject.entity.product;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "category_metadata_field")
+@JsonFilter("categoryMetadataFilter")
 public class CategoryMetadataField {
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -17,9 +19,9 @@ public class CategoryMetadataField {
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
     private String name;
-    @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_metadata_field_id")
+    @JsonProperty
     private Set<CategoryMetadataFieldValues> values;
 
     public UUID getId() {

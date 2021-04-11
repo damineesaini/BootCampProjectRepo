@@ -1,8 +1,10 @@
 package com.bootcamp.BootcampProject.entity.user;
 
 import com.bootcamp.BootcampProject.entity.image.Image;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -10,7 +12,7 @@ import java.util.*;
 
 @Entity
 @Table(name = "user")
-//@JsonFilter("userFilter")
+@JsonFilter("userFilter")
 public class User{
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -27,6 +29,7 @@ public class User{
     private String password;
     @Column(name = "is_deleted")
     private boolean isDeleted;
+    @JsonProperty("isActive")
     @Column(name = "is_active")
     private boolean isActive;
     private boolean isLocked;

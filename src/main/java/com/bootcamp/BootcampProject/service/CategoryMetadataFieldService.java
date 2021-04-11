@@ -12,7 +12,11 @@ import com.bootcamp.BootcampProject.exception.DoesNotExistException;
 import com.bootcamp.BootcampProject.repository.CategoryMetadataFieldRepository;
 import com.bootcamp.BootcampProject.repository.CategoryMetadataFieldValuesRepository;
 import com.bootcamp.BootcampProject.repository.CategoryRepository;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -40,16 +44,16 @@ public class CategoryMetadataFieldService {
             CategoryMetadataField categoryMetadataField1 = new CategoryMetadataField();
             categoryMetadataField1.setName(categoryMetadataFieldDto.getName());
             categoryMetadataFieldRepository.save(categoryMetadataField1);
-            return "Category Metadata added successfully";
+            return "Category Metadata added successfully with id: "+ categoryMetadataField1.getId();
         }
     }
 
 
-    public String addMetadataFieldValue2(CategoryMetadataFieldValueDto categoryMetadataFieldValueDto, UUID id, UUID mtaId) throws AlreadyExistException, DoesNotExistException {
-        if(!categoryRepository.findById(id).isPresent()){
+    public String addMetadataFieldValue2(CategoryMetadataFieldValueDto categoryMetadataFieldValueDto, UUID id, UUID mtaId) throws DoesNotExistException {
+        if(categoryRepository.findById(id).isEmpty()){
             throw new DoesNotExistException("category does not exist");
             }
-        else if (!categoryMetadataFieldRepository.findById(mtaId).isPresent()){
+        else if (categoryMetadataFieldRepository.findById(mtaId).isEmpty()){
             throw new DoesNotExistException("Metadata field not exist");
             }
         else {
@@ -124,11 +128,19 @@ public class CategoryMetadataFieldService {
         }
     }
 
-        public List<CategoryMetadataField> findAllMetadataField(){
-            return (List<CategoryMetadataField>) categoryMetadataFieldRepository.findAll();
+        public MappingJacksonValue findAllMetadataField(){
+            SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id","name");
+            FilterProvider filters = new SimpleFilterProvider().addFilter("categoryMetadataFilter",filter);
+            MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(categoryMetadataFieldRepository.findAll());
+            mappingJacksonValue.setFilters(filters);
+            return mappingJacksonValue;
         }
 
-    public List<CategoryMetadataFieldValues> findAllMetadataFieldValues(){
+    public List<CategoryMetadataFieldValues> findAllMetadataFieldValues(UUID categoryId){
+        return categoryMetadataFieldValuesRepository.findByCategoryId(categoryId);
+    }
+
+    public List<CategoryMetadataFieldValues> getAllMetadataFieldValues(){
         return (List<CategoryMetadataFieldValues>) categoryMetadataFieldValuesRepository.findAll();
     }
 
@@ -147,6 +159,7 @@ public class CategoryMetadataFieldService {
                 metadataFieldResponse.setField(categoryMetadataFieldRepository.findById(metadataFieldId).get().getName());
                 metadataValueResponse = new MetadataValueResponse();
                 metadataValueResponse.setMetadataFieldResponse(metadataFieldResponse);
+                metadataValueResponse.setValues(values.getValues());
                 metadataValueResponseList.add(metadataValueResponse);
             }
             return metadataValueResponseList;

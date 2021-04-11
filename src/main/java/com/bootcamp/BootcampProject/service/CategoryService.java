@@ -49,7 +49,7 @@ public class CategoryService {
                     parentCategory.setHasChild(true);
                     categoryRepository.save(parentCategory);
                     categoryRepository.save(category);
-                    return "category saved successfully";
+                    return "category saved successfully with id: "+category.getId();
                 }
                 else {
                     List<Product> parentAssociatedProduct = productRepository.findAllByCategoryId(parentCategory.getId());
@@ -64,7 +64,7 @@ public class CategoryService {
                             parentCategory.setHasChild(true);
                             categoryRepository.save(parentCategory);
                             categoryRepository.save(category);
-                            return  "category saved successfully";
+                            return  "category saved successfully with id: "+category.getId();
                         }
                 }
                 }
@@ -75,13 +75,22 @@ public class CategoryService {
             category.setName(categoryDto.getName());
             category.setParentCategoryId(null);
             categoryRepository.save(category);
-            return  "category saved successfully";
+            return  "category saved successfully with id: "+category.getId();
         }
     }
 
-    public Category viewCategory(UUID id) throws Exception {
+    public List<Category> viewCategory(UUID id) throws Exception {
         if (categoryRepository.findById(id).isPresent()){
-            return categoryRepository.findById(id).get();
+            List<Category> categories =new ArrayList<>();
+            Category category= categoryRepository.findById(id).get();
+            if(category.isHasChild()){
+            categories = categoryRepository.findAllByParentId(category.getId());
+                categories.add(0,category);
+            }
+            else {
+                categories.add(category);
+            }
+            return categories;
         }
         else {
             throw new Exception("invalid id");
