@@ -1,9 +1,11 @@
 package com.bootcamp.BootcampProject.controller;
 
 import com.bootcamp.BootcampProject.entity.image.Image;
+import com.bootcamp.BootcampProject.entity.product.ProductVariation;
 import com.bootcamp.BootcampProject.entity.user.Customer;
 import com.bootcamp.BootcampProject.entity.user.Seller;
 import com.bootcamp.BootcampProject.exception.DoesNotExistException;
+import com.bootcamp.BootcampProject.exception.UnauthorizedAccessException;
 import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.repository.ProductVariationRepository;
 import com.bootcamp.BootcampProject.service.CustomerService;
@@ -130,47 +132,50 @@ public class ImageController {
     }
 
     @PostMapping("/seller/uploadProductVariationImage")
-    public ResponseEntity<Object> uploadProductVariationImage(@RequestBody MultipartFile file, @Param("productVariationId") String productVariationId) throws Exception, DoesNotExistException {
+    public ResponseEntity<Object> uploadProductVariationImage(@RequestBody MultipartFile file, @Param("productVariationId") String productVariationId) throws Exception, DoesNotExistException, UnauthorizedAccessException {
         if (file.isEmpty()) {
             throw new IOException("Upload Image");
         }
         if (productVariationRepository.findById(UUID.fromString(productVariationId)).isPresent()) {
-//            ProductVariation productVariation = productVariationRepository.findById(UUID.fromString(productVariationId)).get();
+            ProductVariation productVariation = productVariationRepository.findById(UUID.fromString(productVariationId)).get();
             UUID prodId = UUID.fromString(productVariationId);
             Seller seller = sellerService.getLoggedInSeller();
-            String message=null;
-            try {
-                Path fileStorageLocation = Paths.get(FOLDER_PATH).toAbsolutePath().normalize();
-                System.out.println(fileStorageLocation);
-                String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
-                System.out.println(originalFileName);
-                String fileName = "";
-                String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-                System.out.println(extension);
+            if (seller.equals(productVariation.getProductId().getSellerUserId())) {
+                String message = null;
+                try {
+                    Path fileStorageLocation = Paths.get(FOLDER_PATH).toAbsolutePath().normalize();
+                    System.out.println(fileStorageLocation);
+                    String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
+                    System.out.println(originalFileName);
+                    String fileName = "";
+                    String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+                    System.out.println(extension);
 
-                if (extension.equals(".jpeg")||extension.equals(".jpg")||extension.equals(".png")){
-                    fileName= prodId + extension;
-                    System.out.println(fileName);
-                    System.out.println(fileStorageLocation.resolve("/products/variations"));
-                    Path targetLocation = fileStorageLocation.resolve(fileName);
-                    System.out.println(targetLocation);
-                    Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+                    if (extension.equals(".jpeg") || extension.equals(".jpg") || extension.equals(".png")) {
+                        fileName = prodId + extension;
+                        System.out.println(fileName);
+                        System.out.println(fileStorageLocation.resolve("/products/variations"));
+                        Path targetLocation = fileStorageLocation.resolve(fileName);
+                        System.out.println(targetLocation);
+                        Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-                    Image image =new Image(file.getOriginalFilename(),file.getContentType(),file.getBytes());
-                    image.setFilename(prodId.toString()+extension);
-                    image.setPath(targetLocation.toString());
-                    image.setCreateDate(new Date());
-                    image.setUserId(seller.getUserId());
+                        Image image = new Image(file.getOriginalFilename(), file.getContentType(), file.getBytes());
+                        image.setFilename(prodId.toString() + extension);
+                        image.setPath(targetLocation.toString());
+                        image.setCreateDate(new Date());
+                        image.setUserId(seller.getUserId());
 
-                     message = imageService.saveProductVariationImage(image,prodId);
-                    return new ResponseEntity<>(message, HttpStatus.CREATED);
+                        message = imageService.saveProductVariationImage(image, prodId);
+                        return new ResponseEntity<>(message, HttpStatus.CREATED);
+                    } else {
+                        throw new Exception("Invalid file format. Kindly use jpg,jpeg and png");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    throw e;
                 }
-                else {
-                    throw new Exception("Invalid file format. Kindly use jpg,jpeg and png");
-                }
-            }catch (IOException e){
-                e.printStackTrace();
-                throw e;
+            } else {
+                throw new UnauthorizedAccessException("you are not the owner of this product");
             }
         }
         else {
