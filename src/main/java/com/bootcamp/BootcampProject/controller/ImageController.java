@@ -1,7 +1,6 @@
 package com.bootcamp.BootcampProject.controller;
 
 import com.bootcamp.BootcampProject.entity.image.Image;
-import com.bootcamp.BootcampProject.entity.product.ProductVariation;
 import com.bootcamp.BootcampProject.entity.user.Customer;
 import com.bootcamp.BootcampProject.entity.user.Seller;
 import com.bootcamp.BootcampProject.exception.DoesNotExistException;
@@ -15,7 +14,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -128,13 +130,13 @@ public class ImageController {
     }
 
     @PostMapping("/seller/uploadProductVariationImage")
-    public ResponseEntity<Object> uploadProductVariationImage(@RequestParam("file") MultipartFile file, @Param("productVariationId") String productVariationId) throws Exception, DoesNotExistException {
+    public ResponseEntity<Object> uploadProductVariationImage(@RequestBody MultipartFile file, @Param("productVariationId") String productVariationId) throws Exception, DoesNotExistException {
         if (file.isEmpty()) {
             throw new IOException("Upload Image");
         }
         if (productVariationRepository.findById(UUID.fromString(productVariationId)).isPresent()) {
-            ProductVariation productVariation = productVariationRepository.findById(UUID.fromString(productVariationId)).get();
-            UUID prodId = productVariation.getProductId().getId();
+//            ProductVariation productVariation = productVariationRepository.findById(UUID.fromString(productVariationId)).get();
+            UUID prodId = UUID.fromString(productVariationId);
             Seller seller = sellerService.getLoggedInSeller();
             String message=null;
             try {
@@ -160,7 +162,7 @@ public class ImageController {
                     image.setCreateDate(new Date());
                     image.setUserId(seller.getUserId());
 
-                     message = imageService.saveImage(image,prodId);
+                     message = imageService.saveProductVariationImage(image,prodId);
                     return new ResponseEntity<>(message, HttpStatus.CREATED);
                 }
                 else {

@@ -64,7 +64,7 @@ public class ProductController {
     }
 
     @GetMapping("/seller/view-variation/{id}")
-    public MappingJacksonValue viewVariation(@PathVariable String id, HttpServletRequest httpServletRequest) throws Exception, DoesNotExistException, InactiveException, ProductNotFoundException {
+    public MappingJacksonValue viewVariation(@PathVariable String id, HttpServletRequest httpServletRequest) throws  DoesNotExistException, InactiveException, ProductNotFoundException {
         UUID variationId = UUID.fromString(id);
         Seller seller = sellerService.getLoggedInSeller();
         return productVariationService.viewProductVariationById(variationId,seller);
@@ -77,7 +77,7 @@ public class ProductController {
     }
 
     @GetMapping("/seller/view-allvariation/{productid}")
-    public MappingJacksonValue viewAllVariation(@PathVariable String productid, HttpServletRequest httpServletRequest) throws Exception, InactiveException, ProductNotFoundException {
+    public MappingJacksonValue viewAllVariation(@PathVariable String productid, HttpServletRequest httpServletRequest) throws InactiveException, ProductNotFoundException {
         UUID productId = UUID.fromString(productid);
         Seller seller = sellerService.getLoggedInSeller();
         return productVariationService.viewAllVariationOfProduct(productId,seller);

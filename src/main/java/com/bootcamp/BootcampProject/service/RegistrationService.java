@@ -76,7 +76,7 @@ public class RegistrationService {
                 message.setTo(customerRegister.getEmail());
                 message.setFrom("damineesaini1111@gmail.com");
                 message.setSubject("Complete Registration");
-                message.setText("To confirm your account, please lick here:"+"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
+                message.setText("To confirm your account, please lick here:"+"http://localhost:8080/register/confirm-account?token="+confirmationToken.getConfirmationToken());
                 emailSendService.sendEmail(message);
                 return newCustomer;
         }
@@ -117,13 +117,11 @@ public class RegistrationService {
             newSeller.setGst(sellerRegister.getGst());
             newSeller.setUserId(newUser);
             sellerRepository.save(newSeller);
-            ConfirmationToken confirmationToken= new ConfirmationToken(newUser);
-            confirmationTokenRepository.save(confirmationToken);
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(sellerRegister.getEmail());
             message.setFrom("damineesaini1111@gmail.com");
-            message.setSubject("Complete Registration");
-            message.setText("To confirm your account, please lick here:"+"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
+            message.setSubject("Waiting for activation!!");
+            message.setText("Account has been created waiting for approval from admin");
             emailSendService.sendEmail(message);
             return newSeller;
         }

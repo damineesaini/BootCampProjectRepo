@@ -14,6 +14,7 @@ public class CustomerRegister {
     @NotNull
     private String lastName;
     @Email(message = "Email should be valid")
+    @NotNull
     private String email;
     @Pattern(regexp = ValidationRegex.PHONE)
     @NotNull
@@ -95,7 +96,7 @@ public class CustomerRegister {
     }
 
     public void setConfirmPassword(String confirmPassword) {
-        confirmPassword = confirmPassword;
+        this.confirmPassword = confirmPassword;
     }
 
     public String getCity() {

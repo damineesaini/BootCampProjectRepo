@@ -16,9 +16,11 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -93,6 +95,8 @@ public class CategoryMetadataFieldService {
 
     }
 
+    @Transactional
+    @Modifying
     public String updateMetadataFieldValue(CategoryMetadataFieldValueDto categoryMetadataFieldValueDto,UUID id, UUID mtaId) throws Exception {
         if(categoryRepository.findById(id).isEmpty()){
             throw new Exception("category does not exist");

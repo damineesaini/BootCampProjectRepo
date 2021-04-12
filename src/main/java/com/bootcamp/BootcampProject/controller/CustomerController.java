@@ -55,7 +55,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/delete-address/{addressId}")
-    public String deleteAddress(@Valid @PathVariable String addressId,HttpServletResponse response) throws DoesNotExistException, UserNotFoundException {
+    public String deleteAddress(@Valid @PathVariable String addressId) throws DoesNotExistException, UserNotFoundException {
         UUID addressid = UUID.fromString(addressId);
         Customer customer = customerService.getLoggedInCustomer();
         UUID id =customer.getUserId().getId();
@@ -64,7 +64,7 @@ public class CustomerController {
     }
 
     @PutMapping("/update-address/{addressId}")
-    public String updateAddress(@Valid @RequestBody NewAddress newAddress, @PathVariable String addressId, HttpServletResponse response) throws DoesNotExistException, UserNotFoundException {
+    public String updateAddress(@Valid @RequestBody NewAddress newAddress, @PathVariable String addressId) throws DoesNotExistException, UserNotFoundException {
         UUID addressid = UUID.fromString(addressId);
         Customer customer = customerService.getLoggedInCustomer();
         UUID id =customer.getUserId().getId();

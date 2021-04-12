@@ -25,6 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -67,11 +68,11 @@ public class CustomerService {
     }
 
     public MappingJacksonValue getAddress() throws UserNotFoundException {
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("addresses");
-        SimpleBeanPropertyFilter filter1 = SimpleBeanPropertyFilter.filterOutAllExcept("addressLine","city","state","country","zipcode","label");
-        SimpleBeanPropertyFilter filter2 = SimpleBeanPropertyFilter.filterOutAllExcept("userId");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("userFilter",filter).addFilter("addressFilter",filter1).addFilter("customerFilter",filter2);
-        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(getLoggedInCustomer());
+        UUID id = getLoggedInCustomer().getUserId().getId();
+        List<Address> addressList=addressRepository.findAllByUserId(id);
+        SimpleBeanPropertyFilter filter1 = SimpleBeanPropertyFilter.filterOutAllExcept("id","addressLine","city","state","country","zipcode","label");
+        FilterProvider filters = new SimpleFilterProvider().addFilter("addressFilter",filter1);
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(addressList);
         mappingJacksonValue.setFilters(filters);
         return mappingJacksonValue;
     }
@@ -158,7 +159,7 @@ public class CustomerService {
                 if (newAddress.getCountry()!=null){
                     updatedAddress.setCountry(newAddress.getCountry());
                 }
-                if (newAddress.getZipcode()!=0l){
+                if (newAddress.getZipcode()!=0){
                     updatedAddress.setZipcode(newAddress.getZipcode());
                 }
                 if (newAddress.getLabel()!=null){

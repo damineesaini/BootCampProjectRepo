@@ -186,7 +186,7 @@ System.out.println(dbValues);
         }
     }
 
-    public MappingJacksonValue viewProductVariationById(UUID variationId,Seller seller) throws Exception, InactiveException, DoesNotExistException, ProductNotFoundException {
+    public MappingJacksonValue viewProductVariationById(UUID variationId,Seller seller) throws  InactiveException, DoesNotExistException, ProductNotFoundException {
         if (productVariationRepository.findById(variationId).isPresent()){
             ProductVariation productVariation = productVariationRepository.findById(variationId).get();
             Product product = productVariation.getProductId();
@@ -196,7 +196,8 @@ System.out.println(dbValues);
                         SimpleBeanPropertyFilter filter4 = SimpleBeanPropertyFilter.filterOutAllExcept("name","description","brand","isActive","isDelete","isCancellable","isReturnable","categoryId");
                         SimpleBeanPropertyFilter filterCategory = SimpleBeanPropertyFilter.filterOutAllExcept("name","hasChild","isActive","parentCategoryId");
                         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("quantityAvailable","price","productId","productMetadata","productImage");
-                        FilterProvider filters = new SimpleFilterProvider().addFilter("productFilter",filter4).addFilter("productVariationFilter",filter).addFilter("categoryFilter",filterCategory);
+                        SimpleBeanPropertyFilter filter2 =SimpleBeanPropertyFilter.filterOutAllExcept("filename","path");
+                        FilterProvider filters = new SimpleFilterProvider().addFilter("productFilter",filter4).addFilter("imageFilter",filter2).addFilter("productVariationFilter",filter).addFilter("categoryFilter",filterCategory);
                         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(productVariation);
                         mappingJacksonValue.setFilters(filters);
                         return mappingJacksonValue;
@@ -223,8 +224,9 @@ System.out.println(dbValues);
             Product product = productRepository.findById(productId).get();
             if (product.getSellerUserId().equals(seller)) {
                 if (!product.isDelete()){
+                    SimpleBeanPropertyFilter filter2 =SimpleBeanPropertyFilter.filterOutAllExcept("filename","path");
                     SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id","quantityAvailable","price","productMetadata","productImage");
-                    FilterProvider filters = new SimpleFilterProvider().addFilter("productVariationFilter",filter);
+                    FilterProvider filters = new SimpleFilterProvider().addFilter("productVariationFilter",filter).addFilter("imageFilter",filter2);
                     MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(productVariationRepository.findAllByProductId(product));
                     mappingJacksonValue.setFilters(filters);
                     return mappingJacksonValue;

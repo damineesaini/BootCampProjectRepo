@@ -27,7 +27,8 @@ public class RegistrationController {
         if(customer.getPassword().equals(customer.getConfirmPassword())){
             Customer newCustomer = registrationService.createNewCustomer(customer);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(newCustomer.getUserId()).toUri();
-            return ResponseEntity.created(location).build();}
+            return ResponseEntity.created(location).build();
+        }
         else {
             return "password does not match";
         }

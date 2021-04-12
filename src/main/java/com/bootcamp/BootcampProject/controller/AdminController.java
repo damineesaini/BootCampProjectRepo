@@ -15,7 +15,7 @@ import java.util.UUID;
 public class AdminController {
 
     @Autowired
-    AdminService adminService;
+    private AdminService adminService;
 
     @Autowired
     private TokenStore tokenStore;

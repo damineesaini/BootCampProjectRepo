@@ -45,7 +45,6 @@ public class SellerRegister {
     @Max(999999)
     private int zipcode;
     @Pattern(regexp = ValidationRegex.ISALPHA)
-    @NotNull
     private String label;
 
     public String getFirstName() {

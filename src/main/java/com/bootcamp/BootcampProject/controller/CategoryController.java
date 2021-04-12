@@ -134,8 +134,9 @@ public class CategoryController {
         categoryDetailResponse.setBrand(categoryService.findBrandListForCategory(uuid));
         categoryDetailResponse.setPrice(categoryService.findPrice(uuid));
         SimpleBeanPropertyFilter filter4 = SimpleBeanPropertyFilter.filterOutAllExcept("name","description","brand","isCancellable","isReturnable");
+        SimpleBeanPropertyFilter filter2 =SimpleBeanPropertyFilter.filterOutAllExcept("filename","path");
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("quantityAvailable","price","productId","productMetadata","productImage");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("productFilter",filter4).addFilter("productVariationFilter",filter);
+        FilterProvider filters = new SimpleFilterProvider().addFilter("productFilter",filter4).addFilter("imageFilter",filter2).addFilter("productVariationFilter",filter);
         MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(categoryDetailResponse);
         mappingJacksonValue.setFilters(filters);
         return mappingJacksonValue;

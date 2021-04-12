@@ -245,9 +245,10 @@ public class ProductService {
             String brand = product.getBrand();
             List<Product> products = productRepository.findAllByBrand(brand);
             SimpleBeanPropertyFilter filterCategory = SimpleBeanPropertyFilter.filterOutAllExcept("name","hasChild","isActive","parentCategoryId");
+            SimpleBeanPropertyFilter filter2 =SimpleBeanPropertyFilter.filterOutAllExcept("filename","path");
             SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id","quantityAvailable","price","productMetadata","productImage");
             SimpleBeanPropertyFilter filter4 = SimpleBeanPropertyFilter.filterOutAllExcept("name","description","brand","isActive","isDelete","isCancellable","isReturnable","categoryId","productVariationId");
-            FilterProvider filters = new SimpleFilterProvider().addFilter("productFilter",filter4).addFilter("productVariationFilter",filter).addFilter("categoryFilter",filterCategory);
+            FilterProvider filters = new SimpleFilterProvider().addFilter("productFilter",filter4).addFilter("imageFilter",filter2).addFilter("productVariationFilter",filter).addFilter("categoryFilter",filterCategory);
             MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(products);
             mappingJacksonValue.setFilters(filters);
             return mappingJacksonValue;
@@ -320,8 +321,9 @@ public class ProductService {
         else {
             SimpleBeanPropertyFilter filterCategory = SimpleBeanPropertyFilter.filterOutAllExcept("name","hasChild","isActive","parentCategoryId");
             SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id","quantityAvailable","price","productMetadata","productImage");
+            SimpleBeanPropertyFilter filter2 =SimpleBeanPropertyFilter.filterOutAllExcept("filename","path");
             SimpleBeanPropertyFilter filter4 = SimpleBeanPropertyFilter.filterOutAllExcept("name","description","brand","isActive","isDelete","isCancellable","isReturnable","categoryId","productVariationId");
-            FilterProvider filters = new SimpleFilterProvider().addFilter("productFilter",filter4).addFilter("productVariationFilter",filter).addFilter("categoryFilter",filterCategory);
+            FilterProvider filters = new SimpleFilterProvider().addFilter("productFilter",filter4).addFilter("imageFilter",filter2).addFilter("productVariationFilter",filter).addFilter("categoryFilter",filterCategory);
             MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(productRepository.findAllNonDeletedActive());
             mappingJacksonValue.setFilters(filters);
             return mappingJacksonValue;

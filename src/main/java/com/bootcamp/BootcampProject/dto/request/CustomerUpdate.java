@@ -2,20 +2,16 @@ package com.bootcamp.BootcampProject.dto.request;
 
 import com.bootcamp.BootcampProject.utility.ValidationRegex;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 public class CustomerUpdate {
     @Pattern(regexp = ValidationRegex.ISALPHA)
-    @NotNull
     private String firstName;
     @Pattern(regexp = ValidationRegex.ISALPHA)
     private String middleName;
     @Pattern(regexp = ValidationRegex.ISALPHA)
-    @NotNull
     private String lastName;
     @Pattern(regexp = ValidationRegex.PHONE)
-    @NotNull
     private String contactNo;
 
     public CustomerUpdate(String firstName, String middleName, String lastName, String contactNo) {
