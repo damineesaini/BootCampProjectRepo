@@ -142,7 +142,7 @@ public class RegistrationService {
                 message.setTo(userExists.getEmail());
                 message.setFrom("damineesaini1111@gmail.com");
                 message.setSubject("Complete Registration");
-                message.setText("To confirm your account, please lick here:"+"http://localhost:8080/confirm-account?token="+confirmationToken1.getConfirmationToken());
+                message.setText("To confirm your account, please lick here:"+"http://localhost:8080/confirm-account?token="+confirmationToken2.getConfirmationToken());
                 emailSendService.sendEmail(message);
                 throw new TokenExpiredException("Token has been expired!! New activation link send on your email");
             } else {
@@ -179,7 +179,7 @@ public class RegistrationService {
                         message.setTo(userExists.getEmail());
                         message.setFrom("damineesaini1111@gmail.com");
                         message.setSubject("Complete Registration");
-                        message.setText("To confirm your account, please lick here:"+"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
+                        message.setText("To confirm your account, please lick here:"+"http://localhost:8080/confirm-account?token="+confirmationToken1.getConfirmationToken());
                         emailSendService.sendEmail(message);
 
                         return "New activation link is successfully sent on your registered email";
@@ -196,7 +196,7 @@ public class RegistrationService {
                     message.setTo(userExists.getEmail());
                     message.setFrom("damineesaini1111@gmail.com");
                     message.setSubject("Complete Registration");
-                    message.setText("To confirm your account, please click here:"+"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
+                    message.setText("To confirm your account, please click here:"+"http://localhost:8080/confirm-account?token="+newConfirmationToken.getConfirmationToken());
                     emailSendService.sendEmail(message);
 
                     return "New activation link is successfully sent on your registered email";

@@ -1,6 +1,6 @@
 package com.bootcamp.BootcampProject.entity.order;
 
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -12,9 +12,8 @@ enum Status{ORDER_PLACED,CANCELLED,ORDER_REJECTED,ORDER_CONFIRMED,ORDER_SHIPPED,
 @Table(name = "order_status")
 public class OrderStatus {
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(columnDefinition = "BINARY(16)")
+    @GeneratedValue
+    @Type(type="uuid-char")
     private UUID id;
     @OneToOne(targetEntity = OrderProduct.class,cascade = CascadeType.ALL)
     @JoinColumn(name = "order_product_id")

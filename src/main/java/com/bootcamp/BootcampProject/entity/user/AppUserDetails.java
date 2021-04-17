@@ -3,7 +3,6 @@ package com.bootcamp.BootcampProject.entity.user;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,11 +15,12 @@ public class AppUserDetails implements UserDetails {
     private String password;
     private boolean isActive;
     private boolean isDeleted;
+    private int loginAttempts;
+    private boolean isLocked;
     Collection<? extends GrantedAuthority> authorities;
 
     public AppUserDetails(User byUsername){
         this.username = byUsername.getEmail();
-        BCryptPasswordEncoder bCryptPasswordEncoder;
         this.password=byUsername.getPassword();
         List<GrantedAuthority> auths = new ArrayList<>();
         for (Role role:byUsername.getRoles()) {
@@ -29,6 +29,8 @@ public class AppUserDetails implements UserDetails {
         this.authorities=auths;
         this.isActive= byUsername.isActive();
         this.isDeleted = byUsername.isDeleted();
+        this.isLocked =byUsername.isLocked();
+        this.loginAttempts=byUsername.getLoginAttempts();
     }
 
     @Override
@@ -48,12 +50,12 @@ public class AppUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return isDeleted;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return isLocked;
     }
 
     @Override
@@ -63,6 +65,14 @@ public class AppUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isActive;
+    }
+
+    public int getLoginAttempts() {
+        return loginAttempts;
+    }
+
+    public void setLoginAttempts(int loginAttempts) {
+        this.loginAttempts = loginAttempts;
     }
 }

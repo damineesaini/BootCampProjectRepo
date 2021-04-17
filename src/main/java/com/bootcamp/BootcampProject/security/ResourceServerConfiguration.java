@@ -50,6 +50,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         http
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
+                .antMatchers("/cart/customer/**").hasAnyRole("CUSTOMER")
                 .antMatchers("/category/admin/**").hasAnyRole("ADMIN")
                 .antMatchers("/category/customer/**").hasAnyRole("CUSTOMER")
                 .antMatchers("/category/seller/**").hasAnyRole("SELLER")
@@ -70,4 +71,9 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .csrf().disable();
     }
+
+//    @Autowired
+//    private CustomLoginFailureHandler customLoginFailureHandler;
+//
+//    @Autowired CustomLoginSuccessHandler customLoginSuccessHandler;
 }

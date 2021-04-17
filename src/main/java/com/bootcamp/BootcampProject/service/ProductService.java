@@ -69,8 +69,10 @@ public class ProductService {
         newProduct.setBrand(productRequestParams.getBrand());
         newProduct.setDescription(productRequestParams.getDescription());
         newProduct.setCancellable(productRequestParams.isCancellable());
+        System.out.println(productRequestParams.isCancellable());
         newProduct.setCategoryId(category);
         newProduct.setReturnable(productRequestParams.isReturnable());
+        System.out.println(productRequestParams.isReturnable());
         newProduct.setActive(false);
         newProduct.setSellerUserId(seller);
         productRepository.save(newProduct);
@@ -78,7 +80,7 @@ public class ProductService {
         message.setTo("damineesaini7@gmail.com");
         message.setFrom("damineesaini1111@gmail.com");
         message.setSubject("Product Inactive");
-        message.setText("A new product has been added but is waiting to be activated by the admin. The details of the product are: \n" +" category : "+ newProduct.getCategoryId().getName() +"\n brand : "+ newProduct.getBrand() +"\n name : "+ newProduct.getName() +"\n description : "+ newProduct.getDescription());
+        message.setText("A new product has been added but is waiting to be activated by the admin. The details of the product are: \n" +" category : "+ newProduct.getId()+ "\n category : "+ newProduct.getCategoryId().getName() +"\n brand : "+ newProduct.getBrand() +"\n name : "+ newProduct.getName() +"\n description : "+ newProduct.getDescription());
         emailSendService.sendEmail(message);
         return "Product Added Successfully";
     }

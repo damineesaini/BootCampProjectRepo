@@ -19,11 +19,11 @@ public class CategoryDto {
         this.name = name;
     }
 
-    public String getParentCategoryId() {
+    public String getParentCategoryName() {
         return parentCategoryName;
     }
 
-    public void setParentCategoryId(String parentCategoryId) {
-        this.parentCategoryName = parentCategoryId;
+    public void setParentCategoryName(String parentCategoryName) {
+        this.parentCategoryName = parentCategoryName;
     }
 }

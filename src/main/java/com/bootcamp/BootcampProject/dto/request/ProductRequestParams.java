@@ -1,5 +1,7 @@
 package com.bootcamp.BootcampProject.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.validation.constraints.NotNull;
 
 public class ProductRequestParams {
@@ -10,7 +12,9 @@ public class ProductRequestParams {
     @NotNull
     private String brand;
     private String description;
+    @JsonProperty
     private boolean isCancellable;
+    @JsonProperty
     private boolean isReturnable;
 
     public String getCategory() {

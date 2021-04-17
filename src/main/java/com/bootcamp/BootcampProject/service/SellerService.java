@@ -7,6 +7,7 @@ import com.bootcamp.BootcampProject.entity.user.Address;
 import com.bootcamp.BootcampProject.entity.user.AppUserDetails;
 import com.bootcamp.BootcampProject.entity.user.Seller;
 import com.bootcamp.BootcampProject.entity.user.User;
+import com.bootcamp.BootcampProject.exception.UnauthorizedAccessException;
 import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.repository.AddressRepository;
 import com.bootcamp.BootcampProject.repository.SellerRepository;
@@ -61,88 +62,107 @@ public class SellerService {
 
     @Transactional
     @Modifying
-    public String updateSellerProfile(SellerUpdate sellerUpdate, UUID id) throws UserNotFoundException {
-        if(userRepository.findById(id).isPresent()){
+    public String updateSellerProfile(SellerUpdate sellerUpdate, UUID id) throws UserNotFoundException, UnauthorizedAccessException {
+        if(userRepository.findById(id).isPresent()) {
             User user1 = userRepository.findById(id).get();
             Seller seller = sellerRepository.findByUserId(user1);
-            if (sellerUpdate.getFirstName()!=null){
-                user1.setFirstName(sellerUpdate.getFirstName());
-            }
-            if(sellerUpdate.getMiddleName()!=null){
-                user1.setMiddleName(sellerUpdate.getMiddleName());
-            }
-            if(sellerUpdate.getLastName()!=null){
-                user1.setLastName(sellerUpdate.getLastName());
-            }
-            if(sellerUpdate.getCompanyContactNo()!= null)
-                seller.setCompanyContactNo(sellerUpdate.getCompanyContactNo());
+            if (seller.equals(getLoggedInSeller())) {
+                if (sellerUpdate.getFirstName() != null) {
+                    user1.setFirstName(sellerUpdate.getFirstName());
+                }
+                if (sellerUpdate.getMiddleName() != null) {
+                    user1.setMiddleName(sellerUpdate.getMiddleName());
+                }
+                if (sellerUpdate.getLastName() != null) {
+                    user1.setLastName(sellerUpdate.getLastName());
+                }
+                if (sellerUpdate.getCompanyContactNo() != null)
+                    seller.setCompanyContactNo(sellerUpdate.getCompanyContactNo());
 
-            seller.setUserId(user1);
-            sellerRepository.save(seller);
-            return  "Profile updated Successfully";
+                seller.setUserId(user1);
+                sellerRepository.save(seller);
+                return "Profile updated Successfully";
+            } else {
+                throw new UnauthorizedAccessException("tryping to update someone else profile");
+            }
         }
-else {
-    throw new UserNotFoundException("user does not found. invalid user id");
+        else {
+            throw new UserNotFoundException("user does not found. invalid user id");
         }
     }
 
     @Transactional
     @Modifying
-    public String updateAddress(NewAddress newAddress, UUID addressId, UUID id){
-        if (addressRepository.findById(addressId).isPresent()){
-            Address updatedAddress= addressRepository.findById(addressId).get();
+    public String updateAddress(NewAddress newAddress, UUID addressId, UUID id) throws UnauthorizedAccessException, UserNotFoundException {
+        if (userRepository.findById(id).isPresent()) {
+            User user1 = userRepository.findById(id).get();
+            Seller seller = sellerRepository.findByUserId(user1);
+            if (seller.equals(getLoggedInSeller())) {
+                if (addressRepository.findById(addressId).isPresent()) {
+                    Address updatedAddress = addressRepository.findById(addressId).get();
 
-            if (updatedAddress.getUserId().getId().equals(id)){
-                if (newAddress.getAddressLine()!=null){
-                    updatedAddress.setAddressLine(newAddress.getAddressLine());
+                    if (updatedAddress.getUserId().getId().equals(id)) {
+                        if (newAddress.getAddressLine() != null) {
+                            updatedAddress.setAddressLine(newAddress.getAddressLine());
+                        }
+                        if (newAddress.getCity() != null) {
+                            updatedAddress.setCity(newAddress.getCity());
+                        }
+                        if (newAddress.getState() != null) {
+                            updatedAddress.setState(newAddress.getState());
+                        }
+                        if (newAddress.getCountry() != null) {
+                            updatedAddress.setCountry(newAddress.getCountry());
+                        }
+                        if (newAddress.getZipcode() != 0l) {
+                            updatedAddress.setZipcode(newAddress.getZipcode());
+                        }
+                        if (newAddress.getLabel() != null) {
+                            updatedAddress.setLabel(newAddress.getLabel());
+                        }
+                    }
                 }
-                if (newAddress.getCity()!=null){
-                    updatedAddress.setCity(newAddress.getCity());
-                }
-                if (newAddress.getState()!=null){
-                    updatedAddress.setState(newAddress.getState());
-                }
-                if (newAddress.getCountry()!=null){
-                    updatedAddress.setCountry(newAddress.getCountry());
-                }
-                if (newAddress.getZipcode()!=0l){
-                    updatedAddress.setZipcode(newAddress.getZipcode());
-                }
-                if (newAddress.getLabel()!=null){
-                    updatedAddress.setLabel(newAddress.getLabel());
-                }
+                return "address updated successfully";
+            } else {
+                throw new UnauthorizedAccessException("TRying to access someonelese's data");
             }
+        } else {
+            throw new UserNotFoundException("user not found");
         }
-        return "address updated successfully";
     }
 
     @Transactional
     @Modifying
-    public String updatePassword(UpdatePasswordDto updatePasswordDto , UUID id) {
+    public String updatePassword(UpdatePasswordDto updatePasswordDto , UUID id) throws UnauthorizedAccessException, UserNotFoundException {
         if (userRepository.findById(id).isPresent()) {
             User user = userRepository.findById(id).get();
+            Seller seller = sellerRepository.findByUserId(user);
+            if (seller.equals(getLoggedInSeller())) {
+                String oldPassword = updatePasswordDto.getOldPassword();
 
-            String oldPassword = updatePasswordDto.getOldPassword();
+                if (bCryptPasswordEncoder.matches(oldPassword, user.getPassword())) {
+                    String newPassword = updatePasswordDto.getNewPassword();
+                    String confirmPassword = updatePasswordDto.getConfirmPassword();
 
-            if (bCryptPasswordEncoder.matches(oldPassword, user.getPassword())) {
-                String newPassword = updatePasswordDto.getNewPassword();
-                String confirmPassword = updatePasswordDto.getConfirmPassword();
+                    if (newPassword.equals(confirmPassword)) {
+                        String updatePassword = bCryptPasswordEncoder.encode(newPassword);
+                        user.setPassword(updatePassword);
+                        userRepository.save(user);
 
-                if (newPassword.equals(confirmPassword)) {
-                    String updatePassword = bCryptPasswordEncoder.encode(newPassword);
-                    user.setPassword(updatePassword);
-                    userRepository.save(user);
-
-                    SimpleMailMessage message = new SimpleMailMessage();
-                    message.setTo(user.getEmail());
-                    message.setFrom("damineesaini1111@gmail.com");
-                    message.setSubject("Password Updated!!");
-                    message.setText("Your account password has been update.");
-                    emailSendService.sendEmail(message);
+                        SimpleMailMessage message = new SimpleMailMessage();
+                        message.setTo(user.getEmail());
+                        message.setFrom("damineesaini1111@gmail.com");
+                        message.setSubject("Password Updated!!");
+                        message.setText("Your account password has been update.");
+                        emailSendService.sendEmail(message);
+                    }
                 }
+                return "password updated successfully!!";
+            } else {
+                throw new UnauthorizedAccessException("trying to update someone else's password");
             }
-            return "password updated successfully!!";
+        } else {
+            throw new UserNotFoundException("user not found");
         }
-        return "user not found";
     }
 }

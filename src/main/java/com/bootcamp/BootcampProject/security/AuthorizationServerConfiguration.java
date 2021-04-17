@@ -1,10 +1,13 @@
 package com.bootcamp.BootcampProject.security;
 
+import com.bootcamp.BootcampProject.service.UserDaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.event.AbstractAuthenticationFailureEvent;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -29,6 +32,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @Autowired
     UserDetailsService userDetailsService;
+
+    @Autowired
+    UserDaoService userDaoService;
 
 
     public AuthorizationServerConfiguration() {
@@ -69,6 +75,13 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Override
     public void configure(AuthorizationServerSecurityConfigurer authorizationServerSecurityConfigurer) throws Exception {
         authorizationServerSecurityConfigurer.allowFormAuthenticationForClients();
+    }
+
+    @EventListener
+    public void authFailedEventListener(AbstractAuthenticationFailureEvent oAuth2AuthenticationFailureEvent){
+        System.out.println("inside auth failed");
+        String username = (String) oAuth2AuthenticationFailureEvent.getAuthentication().getPrincipal();
+        userDaoService.manageAttempts(username);
     }
 
 }

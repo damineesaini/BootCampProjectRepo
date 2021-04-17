@@ -1,7 +1,7 @@
 package com.bootcamp.BootcampProject.entity.order;
 
 import com.bootcamp.BootcampProject.entity.product.ProductVariation;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -10,9 +10,8 @@ import java.util.UUID;
 @Table(name = "order_product")
 public class OrderProduct {
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(columnDefinition = "BINARY(16)")
+    @GeneratedValue
+    @Type(type="uuid-char")
     private UUID id;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="order_id")

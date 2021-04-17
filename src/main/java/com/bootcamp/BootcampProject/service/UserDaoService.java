@@ -2,10 +2,9 @@ package com.bootcamp.BootcampProject.service;
 
 import com.bootcamp.BootcampProject.entity.user.AppUserDetails;
 import com.bootcamp.BootcampProject.entity.user.User;
-import com.bootcamp.BootcampProject.exception.InactiveException;
-import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -15,31 +14,57 @@ public class UserDaoService {
     @Autowired
     private UserRepository userRepository;
 
-    public AppUserDetails loadUserByUsername(String username) throws Exception, UserNotFoundException, InactiveException {
+    @Autowired
+    private EmailSendService emailSendService;
+
+    public AppUserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
         User user=userRepository.findByEmail(username);
-        System.out.println(user);
-        if(user!=null){
-            if(username!=null){
-                if(user.isActive()){
-                    if (!user.isLocked()){
-                        System.out.println("inside is locked"+user.isLocked());
-                        user.setLocked(false);
-                        return new AppUserDetails(user);
-                    }
-                    else {
-                        throw new InactiveException("Account is locked");
-                    }
-                }
-                else{
-                    throw new InactiveException("Account is not activated");
-                }
-            }
-            else {
-                throw new UsernameNotFoundException("username cannot not be blank");
-            }
+        System.out.println(username);
+        if(user!=null) {
+                return new AppUserDetails(user);
         }
         else {
-            throw new UserNotFoundException("Invalid username entered");
+            throw new UsernameNotFoundException("Invalid username entered");
+        }
+    }
+
+    public static final int MAX_FAILED_ATTEMPTS = 3;
+
+    public void increaseFailedAttempts(User user) {
+        int newLoginAttempts = user.getLoginAttempts() + 1;
+        user.setLoginAttempts(newLoginAttempts);
+        userRepository.save(user);
+        userRepository.updateLoginAttempts(newLoginAttempts, user.getEmail());
+    }
+
+    public void resetFailedAttempts(String email) {
+        User user = userRepository.findByEmail(email);
+        user.setLoginAttempts(0);
+        userRepository.save(user);
+        userRepository.updateLoginAttempts(0, email);
+    }
+
+    public void lock(User user) {
+        user.setLocked(false);
+        userRepository.save(user);
+    }
+
+    public void manageAttempts(String username) {
+        User user = userRepository.findByEmail(username);
+        if(user!=null) {
+            System.out.println("inside if");
+            if (user.getLoginAttempts() > 2) {
+                if(user.isLocked()){
+                    user.setLocked(false);
+                    SimpleMailMessage mail = new SimpleMailMessage();
+                    mail.setTo(user.getEmail());
+                    mail.setSubject("Account locked");
+                    mail.setText("To unlock your account, please click here:"+"http://localhost:8080/unlock/unlock-account?email="+user.getEmail());
+                    emailSendService.sendEmail(mail);
+                }
+            }
+            user.setLoginAttempts(user.getLoginAttempts() + 1);
+            userRepository.save(user);
         }
     }
 }

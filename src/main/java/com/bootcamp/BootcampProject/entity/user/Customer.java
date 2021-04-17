@@ -22,6 +22,14 @@ public class Customer{
     private User userId;
     private String contactNo;
 
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     public User getUserId() {
         return userId;
     }

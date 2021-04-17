@@ -50,7 +50,7 @@ public class CategoryController {
     }
 
     @GetMapping("/admin/viewCategory/{id}")
-    public MappingJacksonValue viewSingleCategory(@PathVariable String id) throws Exception {
+    public MappingJacksonValue viewSingleCategory(@PathVariable String id) throws CategoryNotFoundException {
         UUID uuid = UUID.fromString(id);
         CategoryAdminDetails categoryAdminDetails = new CategoryAdminDetails();
         categoryAdminDetails.setCategoryList(categoryService.viewCategory(uuid));
@@ -110,7 +110,7 @@ public class CategoryController {
     /********************************** Customer API *************************************/
 
         @GetMapping("/customer/view-all-categories")
-    public Object listAllSubCategory(@Param("id") String id) throws Exception {
+    public Object listAllSubCategory(@Param("id") String id) throws Exception, DoesNotExistException, CategoryNotFoundException {
             SimpleBeanPropertyFilter filterCategory = SimpleBeanPropertyFilter.filterOutAllExcept("id","name","parentCategoryId");
             FilterProvider filters = new SimpleFilterProvider().addFilter("categoryFilter",filterCategory);
             if (id.equals("")){

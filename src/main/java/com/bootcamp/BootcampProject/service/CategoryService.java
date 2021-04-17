@@ -4,6 +4,7 @@ import com.bootcamp.BootcampProject.dto.request.CategoryDto;
 import com.bootcamp.BootcampProject.entity.product.Category;
 import com.bootcamp.BootcampProject.entity.product.Product;
 import com.bootcamp.BootcampProject.exception.AlreadyExistException;
+import com.bootcamp.BootcampProject.exception.CategoryNotFoundException;
 import com.bootcamp.BootcampProject.exception.DoesNotExistException;
 import com.bootcamp.BootcampProject.repository.CategoryMetadataFieldValuesRepository;
 import com.bootcamp.BootcampProject.repository.CategoryRepository;
@@ -37,11 +38,12 @@ public class CategoryService {
         if(categoryRepository.findByName(categoryDto.getName()) != null){
             return "Category already exists";
         }
-        else if(categoryDto.getParentCategoryId()!=null) {
-            if (categoryRepository.findByName(categoryDto.getParentCategoryId()) == null) {
+        else if(categoryDto.getParentCategoryName()!=null) {
+            System.out.println(categoryRepository.findByName(categoryDto.getParentCategoryName()));
+            if (categoryRepository.findByName(categoryDto.getParentCategoryName()) == null) {
                 throw new DoesNotExistException("parent category mentioned does not exist");
             } else {
-                Category parentCategory = categoryRepository.findByName(categoryDto.getParentCategoryId());
+                Category parentCategory = categoryRepository.findByName(categoryDto.getParentCategoryName());
                 if (productRepository.findAllByCategoryId(parentCategory.getId()).isEmpty()) {
                     Category category = new Category();
                     category.setName(categoryDto.getName());
@@ -66,7 +68,7 @@ public class CategoryService {
                             categoryRepository.save(category);
                             return  "category saved successfully with id: "+category.getId();
                         }
-                }
+                    }
                 }
             }
 
@@ -79,7 +81,7 @@ public class CategoryService {
         }
     }
 
-    public List<Category> viewCategory(UUID id) throws Exception {
+    public List<Category> viewCategory(UUID id) throws CategoryNotFoundException {
         if (categoryRepository.findById(id).isPresent()){
             List<Category> categories =new ArrayList<>();
             Category category= categoryRepository.findById(id).get();
@@ -93,7 +95,7 @@ public class CategoryService {
             return categories;
         }
         else {
-            throw new Exception("invalid id");
+            throw new CategoryNotFoundException("invalid id");
         }
     }
 
@@ -113,13 +115,17 @@ public class CategoryService {
         }
     }
 
-    public List<Category> findAllSubCategory(UUID categoryId) throws Exception {
-        if (categoryRepository.findById(categoryId).isPresent()){
+    public List<Category> findAllSubCategory(UUID categoryId) throws DoesNotExistException, CategoryNotFoundException {
+        if (categoryRepository.findById(categoryId).isPresent()) {
             Category parentCategory = categoryRepository.findById(categoryId).get();
-            return categoryRepository.findAllByParentId(parentCategory.getId());
+            if (parentCategory.isHasChild()) {
+                return categoryRepository.findAllByParentId(parentCategory.getId());
+            } else {
+                throw new DoesNotExistException("The category does not have any child");
+            }
         }
         else {
-            throw new Exception("invalid category id");
+            throw new CategoryNotFoundException("invalid category id");
         }
     }
 

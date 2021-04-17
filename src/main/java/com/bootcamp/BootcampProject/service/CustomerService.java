@@ -8,6 +8,7 @@ import com.bootcamp.BootcampProject.entity.user.AppUserDetails;
 import com.bootcamp.BootcampProject.entity.user.Customer;
 import com.bootcamp.BootcampProject.entity.user.User;
 import com.bootcamp.BootcampProject.exception.DoesNotExistException;
+import com.bootcamp.BootcampProject.exception.UnauthorizedAccessException;
 import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.repository.AddressRepository;
 import com.bootcamp.BootcampProject.repository.CustomerRepository;
@@ -79,25 +80,30 @@ public class CustomerService {
 
     @Transactional
     @Modifying
-    public String updateCustomerProfile(CustomerUpdate customerUpdate, UUID id) throws UserNotFoundException {
-        if(userRepository.findById(id).isPresent()){
+    public String updateCustomerProfile(CustomerUpdate customerUpdate, UUID id) throws UserNotFoundException, UnauthorizedAccessException {
+        if(userRepository.findById(id).isPresent()) {
             User user1 = userRepository.findById(id).get();
             Customer customer = customerRepository.findByUserId(user1);
-            if (customerUpdate.getFirstName()!=null){
-                user1.setFirstName(customerUpdate.getFirstName());
+            if (customer.equals(getLoggedInCustomer())) {
+                if (customerUpdate.getFirstName() != null) {
+                    user1.setFirstName(customerUpdate.getFirstName());
+                }
+                if (customerUpdate.getMiddleName() != null) {
+                    user1.setMiddleName(customerUpdate.getMiddleName());
+                }
+                if (customerUpdate.getLastName() != null) {
+                    user1.setLastName(customerUpdate.getLastName());
+                }
+                if (customerUpdate.getContactNo() != null) {
+                    customer.setContactNo(customerUpdate.getContactNo());
+                }
+                customer.setUserId(user1);
+                customerRepository.save(customer);
+                return "Profile updated Successfully";
             }
-            if(customerUpdate.getMiddleName()!=null){
-                user1.setMiddleName(customerUpdate.getMiddleName());
+            else {
+                throw new UnauthorizedAccessException("Trying to access another user account");
             }
-            if(customerUpdate.getLastName()!=null){
-                user1.setLastName(customerUpdate.getLastName());
-            }
-            if(customerUpdate.getContactNo()!= null){
-                customer.setContactNo(customerUpdate.getContactNo());
-            }
-            customer.setUserId(user1);
-            customerRepository.save(customer);
-            return "Profile updated Successfully";
         }
         else {
             throw new UserNotFoundException("invalid user id");
@@ -106,20 +112,26 @@ public class CustomerService {
 
     @Transactional
     @Modifying
-    public String addAddress(NewAddress newAddress,UUID id) throws UserNotFoundException {
-        if(userRepository.findById(id).isPresent()){
+    public String addAddress(NewAddress newAddress,UUID id) throws UserNotFoundException, UnauthorizedAccessException {
+        if(userRepository.findById(id).isPresent()) {
             User user1 = userRepository.findById(id).get();
-            Address address = new Address();
-            address.setAddressLine(newAddress.getAddressLine());
-            address.setCity(newAddress.getCity());
-            address.setState(newAddress.getState());
-            address.setCountry(newAddress.getCountry());
-            address.setZipcode(newAddress.getZipcode());
-            address.setLabel(newAddress.getLabel());
-            address.setUserId(user1);
-            addressRepository.save(address);
+            Customer customer = customerRepository.findByUserId(user1);
+            if (customer.equals(getLoggedInCustomer())) {
+                Address address = new Address();
+                address.setAddressLine(newAddress.getAddressLine());
+                address.setCity(newAddress.getCity());
+                address.setState(newAddress.getState());
+                address.setCountry(newAddress.getCountry());
+                address.setZipcode(newAddress.getZipcode());
+                address.setLabel(newAddress.getLabel());
+                address.setUserId(user1);
+                addressRepository.save(address);
 
-            return "address added";
+                return "address added";
+            }
+            else {
+                throw new UnauthorizedAccessException("trying to access another users data");
+            }
         }
         else {
             throw new UserNotFoundException("invalid user id. user is not found.");
@@ -128,21 +140,34 @@ public class CustomerService {
 
     @Transactional
     @Modifying
-    public String deleteAddress(UUID addressId, UUID id) throws DoesNotExistException {
-        if (addressRepository.findById(addressId).isPresent()){
-            Address address = addressRepository.findById(addressId).get();
-            address.setDelete(true);
-            addressRepository.save(address);
-            return "Address Deleted";
-        }
-        else {
-            throw new DoesNotExistException("Address id does not exist");
+    public String deleteAddress(UUID addressId, UUID id) throws DoesNotExistException, UnauthorizedAccessException, UserNotFoundException {
+        if (userRepository.findById(id).isPresent()) {
+            User user1 = userRepository.findById(id).get();
+            Customer customer = customerRepository.findByUserId(user1);
+            if (customer.equals(getLoggedInCustomer())){
+                if (addressRepository.findById(addressId).isPresent()) {
+                    Address address = addressRepository.findById(addressId).get();
+                    address.setDelete(true);
+                    addressRepository.save(address);
+                    return "Address Deleted";
+                } else {
+                    throw new DoesNotExistException("Address id does not exist");
+                }
+            } else {
+                    throw new UnauthorizedAccessException("trying delete another users address");
+            }
+        } else {
+                throw new DoesNotExistException("User does not exist");
         }
     }
 
     @Transactional
     @Modifying
-    public String updateAddress(NewAddress newAddress,UUID addressId,UUID id) throws DoesNotExistException {
+    public String updateAddress(NewAddress newAddress,UUID addressId,UUID id) throws DoesNotExistException, UserNotFoundException, UnauthorizedAccessException {
+        if (userRepository.findById(id).isPresent()) {
+            User user1 = userRepository.findById(id).get();
+            Customer customer = customerRepository.findByUserId(user1);
+            if (customer.equals(getLoggedInCustomer())){
         if (addressRepository.findById(addressId).isPresent()){
             Address updatedAddress= addressRepository.findById(addressId).get();
 
@@ -171,33 +196,44 @@ public class CustomerService {
         else {
             throw new DoesNotExistException("Address id does not exist");
         }
+            } else {
+                throw new UnauthorizedAccessException("trying delete another users address");
+            }
+        } else {
+            throw new DoesNotExistException("User does not exist");
+        }
     }
 
-    public String updatePassword(UpdatePasswordDto updatePasswordDto , UUID id) throws UserNotFoundException {
+    public String updatePassword(UpdatePasswordDto updatePasswordDto , UUID id) throws UserNotFoundException, UnauthorizedAccessException {
         if (userRepository.findById(id).isPresent()) {
             User user = userRepository.findById(id).get();
+            Customer customer = customerRepository.findByUserId(user);
+            if (customer.equals(getLoggedInCustomer())) {
+                String oldPassword = updatePasswordDto.getOldPassword();
 
-            String oldPassword = updatePasswordDto.getOldPassword();
+                if (bCryptPasswordEncoder.matches(oldPassword, user.getPassword())) {
+                    String newPassword = updatePasswordDto.getNewPassword();
+                    String confirmPassword = updatePasswordDto.getConfirmPassword();
 
-            if (bCryptPasswordEncoder.matches(oldPassword, user.getPassword())) {
-                String newPassword = updatePasswordDto.getNewPassword();
-                String confirmPassword = updatePasswordDto.getConfirmPassword();
+                    if (newPassword.equals(confirmPassword)) {
+                        String updatePassword = bCryptPasswordEncoder.encode(newPassword);
+                        user.setPassword(updatePassword);
+                        userRepository.save(user);
 
-                if (newPassword.equals(confirmPassword)) {
-                    String updatePassword = bCryptPasswordEncoder.encode(newPassword);
-                    user.setPassword(updatePassword);
-                    userRepository.save(user);
-
-                    SimpleMailMessage message = new SimpleMailMessage();
-                    message.setTo(user.getEmail());
-                    message.setFrom("damineesaini1111@gmail.com");
-                    message.setSubject("Password Updated!!");
-                    message.setText("Your account password has been update.");
-                    emailSendService.sendEmail(message);
+                        SimpleMailMessage message = new SimpleMailMessage();
+                        message.setTo(user.getEmail());
+                        message.setFrom("damineesaini1111@gmail.com");
+                        message.setSubject("Password Updated!!");
+                        message.setText("Your account password has been update.");
+                        emailSendService.sendEmail(message);
+                    }
                 }
+                return "password updated successfully!!";
+            } else {
+                throw new UnauthorizedAccessException("trying to update someone else passowrd");
             }
-            return "password updated successfully!!";
-        } else {
+        }
+            else {
             throw new UserNotFoundException("user not found. invalid user id");
         }
     }

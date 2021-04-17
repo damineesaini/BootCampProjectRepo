@@ -1,6 +1,5 @@
 package com.bootcamp.BootcampProject;
 
-import com.bootcamp.BootcampProject.entity.product.*;
 import com.bootcamp.BootcampProject.entity.user.*;
 import com.bootcamp.BootcampProject.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,39 +115,39 @@ public class Bootstrap implements ApplicationRunner {
             seller.setUserId(user2);
             sellerRepository.save(seller);
         }
-        if(categoryRepository.count()<2){
-            Category category = new Category();
-            category.setName("Clothes");
-            category.setHasChild(true);
-            category.setActive(true);
-            categoryRepository.save(category);
-
-            Category category1 = new Category();
-            category1.setName("Men Shirt");
-            category1.setActive(true);
-            category1.setHasChild(false);
-            category1.setParentCategoryId(category);
-            categoryRepository.save(category1);
-
-            CategoryMetadataField categoryMetadataField = new CategoryMetadataField();
-            categoryMetadataField.setName("color");
-            categoryMetadataFieldRepository.save(categoryMetadataField);
-
-            CategoryMetadataField categoryMetadataField1 = new CategoryMetadataField();
-            categoryMetadataField1.setName("size");
-            categoryMetadataFieldRepository.save(categoryMetadataField1);
-
-            CategoryMetadataFieldValues categoryMetadataFieldValues = new CategoryMetadataFieldValues();
-            categoryMetadataFieldValues.setValues("l,m,s");
-            categoryMetadataFieldValues.setCategoryId(category1);
-            categoryMetadataFieldValues.setCategoryMetadataFieldId(categoryMetadataField1);
-            categoryMetadataFieldValuesRepository.save(categoryMetadataFieldValues);
-
-            CategoryMetadataFieldValues categoryMetadataFieldValues1 = new CategoryMetadataFieldValues();
-            categoryMetadataFieldValues1.setValues("black,white,blue");
-            categoryMetadataFieldValues1.setCategoryMetadataFieldId(categoryMetadataField);
-            categoryMetadataFieldValues1.setCategoryId(category1);
-            categoryMetadataFieldValuesRepository.save(categoryMetadataFieldValues1);
-        }
+//        if(categoryRepository.count()<2){
+//            Category category = new Category();
+//            category.setName("Clothes");
+//            category.setHasChild(true);
+//            category.setActive(true);
+//            categoryRepository.save(category);
+//
+//            Category category1 = new Category();
+//            category1.setName("Men Shirt");
+//            category1.setActive(true);
+//            category1.setHasChild(false);
+//            category1.setParentCategoryId(category);
+//            categoryRepository.save(category1);
+//
+//            CategoryMetadataField categoryMetadataField = new CategoryMetadataField();
+//            categoryMetadataField.setName("color");
+//            categoryMetadataFieldRepository.save(categoryMetadataField);
+//
+//            CategoryMetadataField categoryMetadataField1 = new CategoryMetadataField();
+//            categoryMetadataField1.setName("size");
+//            categoryMetadataFieldRepository.save(categoryMetadataField1);
+//
+//            CategoryMetadataFieldValues categoryMetadataFieldValues = new CategoryMetadataFieldValues();
+//            categoryMetadataFieldValues.setValues("l,m,s");
+//            categoryMetadataFieldValues.setCategoryId(category1);
+//            categoryMetadataFieldValues.setCategoryMetadataFieldId(categoryMetadataField1);
+//            categoryMetadataFieldValuesRepository.save(categoryMetadataFieldValues);
+//
+//            CategoryMetadataFieldValues categoryMetadataFieldValues1 = new CategoryMetadataFieldValues();
+//            categoryMetadataFieldValues1.setValues("black,white,blue");
+//            categoryMetadataFieldValues1.setCategoryMetadataFieldId(categoryMetadataField);
+//            categoryMetadataFieldValues1.setCategoryId(category1);
+//            categoryMetadataFieldValuesRepository.save(categoryMetadataFieldValues1);
+//        }
     }
 }

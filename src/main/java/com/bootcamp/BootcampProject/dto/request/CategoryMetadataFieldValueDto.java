@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class CategoryMetadataFieldValueDto {
-    @NotNull
+    @NotNull(message = "fieldValues should not be null!!")
     private List<String> fieldValues;
 
     public List<String> getFieldValues() {

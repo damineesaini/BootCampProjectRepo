@@ -3,6 +3,9 @@ package com.bootcamp.BootcampProject.exception;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.util.Date;
 
@@ -19,6 +23,13 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
     @ExceptionHandler(UserNotFoundException.class)
     public final ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException exception, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public final ResponseEntity<Object> handleUsernameNotFoundException(UsernameNotFoundException exception, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
                 request.getDescription(false));
         return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
@@ -48,6 +59,13 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     @ExceptionHandler(InactiveException.class)
     public final ResponseEntity<Object> handleInactiveException(InactiveException exception, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public final ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException exception, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), "invalid username or password",
                 request.getDescription(false));
         return new ResponseEntity(exceptionResponse, HttpStatus.UNAUTHORIZED);
     }
@@ -97,6 +115,20 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     @ExceptionHandler(IOException.class)
     public final ResponseEntity<Object> handleIOException(IOException exception, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public final ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException exception, WebRequest request){
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), exception.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidGrantException.class)
+    public final ResponseEntity<Object> handleInvalidGrantException(InvalidGrantException exception, WebRequest request){
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), "invalid username or password",
                 request.getDescription(false));
         return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
     }

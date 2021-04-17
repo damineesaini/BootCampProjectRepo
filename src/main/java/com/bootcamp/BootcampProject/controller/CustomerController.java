@@ -5,6 +5,7 @@ import com.bootcamp.BootcampProject.dto.request.NewAddress;
 import com.bootcamp.BootcampProject.dto.request.UpdatePasswordDto;
 import com.bootcamp.BootcampProject.entity.user.Customer;
 import com.bootcamp.BootcampProject.exception.DoesNotExistException;
+import com.bootcamp.BootcampProject.exception.UnauthorizedAccessException;
 import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class CustomerController {
     }
 
     @PutMapping("/update-profile")
-    public String updateProfile(@Valid @RequestBody CustomerUpdate customerUpdate, HttpServletResponse response) throws UserNotFoundException {
+    public String updateProfile(@Valid @RequestBody CustomerUpdate customerUpdate, HttpServletResponse response) throws UserNotFoundException, UnauthorizedAccessException {
         Customer customer = customerService.getLoggedInCustomer();
         UUID id =customer.getUserId().getId();
         String message = customerService.updateCustomerProfile(customerUpdate,id);
@@ -47,7 +48,7 @@ public class CustomerController {
     }
 
     @PostMapping("/add-address")
-    public String addAddress(@Valid @RequestBody NewAddress newAddress, HttpServletResponse response) throws UserNotFoundException {
+    public String addAddress(@Valid @RequestBody NewAddress newAddress, HttpServletResponse response) throws UserNotFoundException, UnauthorizedAccessException {
         Customer customer = customerService.getLoggedInCustomer();
         UUID id = customer.getUserId().getId();
         String message = customerService.addAddress(newAddress,id);
@@ -55,7 +56,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/delete-address/{addressId}")
-    public String deleteAddress(@Valid @PathVariable String addressId) throws DoesNotExistException, UserNotFoundException {
+    public String deleteAddress(@Valid @PathVariable String addressId) throws DoesNotExistException, UserNotFoundException, UnauthorizedAccessException {
         UUID addressid = UUID.fromString(addressId);
         Customer customer = customerService.getLoggedInCustomer();
         UUID id =customer.getUserId().getId();
@@ -64,7 +65,7 @@ public class CustomerController {
     }
 
     @PutMapping("/update-address/{addressId}")
-    public String updateAddress(@Valid @RequestBody NewAddress newAddress, @PathVariable String addressId) throws DoesNotExistException, UserNotFoundException {
+    public String updateAddress(@Valid @RequestBody NewAddress newAddress, @PathVariable String addressId) throws DoesNotExistException, UserNotFoundException, UnauthorizedAccessException {
         UUID addressid = UUID.fromString(addressId);
         Customer customer = customerService.getLoggedInCustomer();
         UUID id =customer.getUserId().getId();
@@ -73,7 +74,7 @@ public class CustomerController {
     }
 
     @PutMapping("/update-password")
-    public String updateAddress(@Valid @RequestBody UpdatePasswordDto updatePasswordDto) throws UserNotFoundException {
+    public String updatePassword(@Valid @RequestBody UpdatePasswordDto updatePasswordDto) throws UserNotFoundException, UnauthorizedAccessException {
         Customer customer = customerService.getLoggedInCustomer();
         UUID id =customer.getUserId().getId();
         String message = customerService.updatePassword(updatePasswordDto,id);

@@ -12,4 +12,14 @@ public class AuthenticationManagerProvider extends WebSecurityConfigurerAdapter 
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
+//    @Bean
+//    public AuthenticationFailureHandler authenticationFailureHandler() {
+//        return new CustomLoginFailureHandler();
+//    }
+//
+//    @Bean
+//    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+//        return new CustomLoginSuccessHandler();
+//    }
 }

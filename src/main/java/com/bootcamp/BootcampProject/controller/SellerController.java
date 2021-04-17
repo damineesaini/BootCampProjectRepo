@@ -4,6 +4,7 @@ import com.bootcamp.BootcampProject.dto.request.NewAddress;
 import com.bootcamp.BootcampProject.dto.request.SellerUpdate;
 import com.bootcamp.BootcampProject.dto.request.UpdatePasswordDto;
 import com.bootcamp.BootcampProject.entity.user.Seller;
+import com.bootcamp.BootcampProject.exception.UnauthorizedAccessException;
 import com.bootcamp.BootcampProject.exception.UserNotFoundException;
 import com.bootcamp.BootcampProject.service.SellerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class SellerController {
     }
 
     @PutMapping("/update-profile")
-    public String updateProfile(@Valid @RequestBody SellerUpdate sellerUpdate, HttpServletResponse response) throws UserNotFoundException {
+    public String updateProfile(@Valid @RequestBody SellerUpdate sellerUpdate, HttpServletResponse response) throws UserNotFoundException, UnauthorizedAccessException {
         Seller seller = sellerService.getLoggedInSeller();
         UUID id =seller.getUserId().getId();
         String message = sellerService.updateSellerProfile(sellerUpdate,id);
@@ -42,7 +43,7 @@ public class SellerController {
     }
 
     @PutMapping("/update-address/{addressId}")
-    public String updateAddress(@Valid @RequestBody NewAddress newAddress,@PathVariable String addressId, HttpServletResponse response){
+    public String updateAddress(@Valid @RequestBody NewAddress newAddress,@PathVariable String addressId, HttpServletResponse response) throws UserNotFoundException, UnauthorizedAccessException {
         UUID addressid = UUID.fromString(addressId);
         Seller seller = sellerService.getLoggedInSeller();
         UUID id =seller.getUserId().getId();
@@ -51,7 +52,7 @@ public class SellerController {
     }
 
     @PutMapping("/update-password")
-    public String updateAddress(@Valid @RequestBody UpdatePasswordDto updatePasswordDto){
+    public String updateAddress(@Valid @RequestBody UpdatePasswordDto updatePasswordDto) throws UserNotFoundException, UnauthorizedAccessException {
         Seller seller = sellerService.getLoggedInSeller();
         UUID id =seller.getUserId().getId();
         String message = sellerService.updatePassword(updatePasswordDto,id);
