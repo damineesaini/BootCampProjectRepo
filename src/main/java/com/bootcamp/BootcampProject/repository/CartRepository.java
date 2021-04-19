@@ -23,4 +23,8 @@ public interface CartRepository extends CrudRepository<Cart, UUID> {
 
     @Query(value = "Select * from cart where customer_user_id=:id and product_variation_id=:id1",nativeQuery = true)
     Optional<Cart> findByCustomerIdAndProductVariationId(@Param("id") UUID id,@Param("id1") UUID id1);
+
+    @Modifying
+    @Query(value = "delete from cart where customer_user_id=:customerId",nativeQuery = true)
+    void deleteByCustomerId(@Param("customerId") UUID customerId);
 }

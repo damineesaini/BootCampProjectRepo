@@ -1,10 +1,12 @@
 package com.bootcamp.BootcampProject.dto.request;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 public class CartDto {
     @NotNull
-    int quantity;
+    @Positive
+    private int quantity;
 
     public int getQuantity() {
         return quantity;

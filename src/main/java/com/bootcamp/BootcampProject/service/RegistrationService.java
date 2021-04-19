@@ -60,10 +60,11 @@ public class RegistrationService {
                 address.setState(customerRegister.getState());
                 address.setZipcode(customerRegister.getZipcode());
                 address.setLabel(customerRegister.getLabel());
-                address.setDelete(false);
                 newUser.addAddresses(address);
                 newUser.setActive(false);
-                newUser.setDeleted(false);
+                newUser.setNotDeleted(true);
+                newUser.setNotLocked(true);
+                newUser.setLoginAttempts(0);
                 Role role = new Role();
                 role.setAuthority("ROLE_CUSTOMER");
                 newUser.setRoles(new ArrayList<>(Arrays.asList(role)));
@@ -108,7 +109,9 @@ public class RegistrationService {
             address.setDelete(false);
             newUser.addAddresses(address);
             newUser.setActive(false);
-            newUser.setDeleted(false);
+            newUser.setNotDeleted(true);
+            newUser.setNotLocked(true);
+            newUser.setLoginAttempts(0);
             Role role = new Role();
             role.setAuthority("ROLE_SELLER");
             newUser.setRoles(new ArrayList<>(Arrays.asList(role)));

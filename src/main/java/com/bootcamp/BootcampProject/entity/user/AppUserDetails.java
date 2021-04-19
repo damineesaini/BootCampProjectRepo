@@ -28,8 +28,8 @@ public class AppUserDetails implements UserDetails {
         }
         this.authorities=auths;
         this.isActive= byUsername.isActive();
-        this.isDeleted = byUsername.isDeleted();
-        this.isLocked =byUsername.isLocked();
+        this.isDeleted = byUsername.isNotDeleted();
+        this.isLocked = byUsername.isNotLocked();
         this.loginAttempts=byUsername.getLoginAttempts();
     }
 

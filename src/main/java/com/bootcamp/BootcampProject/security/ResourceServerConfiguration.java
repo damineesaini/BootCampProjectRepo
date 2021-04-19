@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableResourceServer
@@ -50,7 +51,11 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         http
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
+                .antMatchers("/welcome").permitAll()
                 .antMatchers("/cart/customer/**").hasAnyRole("CUSTOMER")
+                .antMatchers("/order/admin/**").hasAnyRole("ADMIN")
+                .antMatchers("/order/customer/**").hasAnyRole("CUSTOMER")
+                .antMatchers("/order/seller/**").hasAnyRole("SELLER")
                 .antMatchers("/category/admin/**").hasAnyRole("ADMIN")
                 .antMatchers("/category/customer/**").hasAnyRole("CUSTOMER")
                 .antMatchers("/category/seller/**").hasAnyRole("SELLER")
@@ -59,21 +64,21 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers("/product/seller/**").hasAnyRole("SELLER")
                 .antMatchers("/image/customer/**").hasAnyRole("CUSTOMER")
                 .antMatchers("/image/seller/**").hasAnyRole("SELLER")
-                .antMatchers("/register/**").anonymous()
-                .antMatchers("/password/**").anonymous()
-                .antMatchers("/unlock/**").anonymous()
                 .antMatchers("/admin/**").hasAnyRole("ADMIN")
                 .antMatchers("/customer/**").hasAnyRole("CUSTOMER")
                 .antMatchers("/seller/**").hasAnyRole("SELLER")
+                .antMatchers("/register/**").anonymous()
+                .antMatchers("/password/**").anonymous()
+                .antMatchers("/unlock/**").anonymous()
                 .anyRequest().authenticated()
+                .and()
+                .logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/welcome")
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .csrf().disable();
     }
 
-//    @Autowired
-//    private CustomLoginFailureHandler customLoginFailureHandler;
-//
-//    @Autowired CustomLoginSuccessHandler customLoginSuccessHandler;
 }

@@ -20,19 +20,16 @@ public class User{
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
     private String email;
-    @Column(name = "first_name")
     private String firstName;
-    @Column(name = "middle_name")
     private String middleName;
-    @Column(name = "last_name")
     private String lastName;
     private String password;
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private boolean isNotDeleted;
     @JsonProperty("isActive")
-    @Column(name = "is_active")
     private boolean isActive;
-    private boolean isLocked;
+    @Column(name = "is_locked")
+    private boolean isNotLocked;
     @JsonManagedReference
     @OneToOne(cascade = CascadeType.ALL)
     private Image profileImage;
@@ -60,6 +57,22 @@ public class User{
         this.lastName = lastName;
         this.password = password;
         this.roles = roles;
+    }
+
+    public boolean isNotDeleted() {
+        return isNotDeleted;
+    }
+
+    public void setNotDeleted(boolean notDeleted) {
+        isNotDeleted = notDeleted;
+    }
+
+    public boolean isNotLocked() {
+        return isNotLocked;
+    }
+
+    public void setNotLocked(boolean notLocked) {
+        isNotLocked = notLocked;
     }
 
     public UUID getId() {
@@ -110,14 +123,6 @@ public class User{
         this.password = password;
     }
 
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
-    }
-
     public boolean isActive() {
         return isActive;
     }
@@ -150,14 +155,6 @@ public class User{
             address.setUserId(this);
             addresses.add(address);
         }
-    }
-
-    public boolean isLocked() {
-        return isLocked;
-    }
-
-    public void setLocked(boolean locked) {
-        isLocked = locked;
     }
 
     public Image getProfileImage() {

@@ -1,5 +1,7 @@
 package com.bootcamp.BootcampProject;
 
+import com.bootcamp.BootcampProject.entity.product.Category;
+import com.bootcamp.BootcampProject.entity.product.Product;
 import com.bootcamp.BootcampProject.entity.user.*;
 import com.bootcamp.BootcampProject.repository.*;
 import org.junit.jupiter.api.Test;
@@ -133,4 +135,34 @@ class BootcampProjectApplicationTests {
 		seller.setUserId(user);
 		sellerRepository.save(seller);
 	}
+
+	@Test
+	void createCategory(){
+		Category category = new Category();
+		category.setActive(true);
+		category.setHasChild(true);
+		category.setName("Clothes");
+		categoryRepository.save(category);
+
+		Category category1 = new Category();
+		category1.setParentCategoryId(category);
+		category1.setActive(true);
+		category1.setHasChild(false);
+		category1.setName("Shirt");
+		categoryRepository.save(category1);
+
+		Category category2 = new Category();
+		category2.setParentCategoryId(category);
+		category2.setActive(true);
+		category2.setHasChild(false);
+		category2.setName("Jeans");
+		categoryRepository.save(category2);
+	}
+
+	@Test
+	void createProduct(){
+		Product product = new Product();
+
+	}
+
 }

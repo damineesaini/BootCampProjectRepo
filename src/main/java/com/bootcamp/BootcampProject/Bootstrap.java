@@ -52,6 +52,8 @@ public class Bootstrap implements ApplicationRunner {
             user.setEmail("damineesaini7@gmail.com");
             user.setPassword(bCryptPasswordEncoder.encode("9090"));
             user.setActive(true);
+            user.setNotLocked(true);
+            user.setNotDeleted(true);
             Address address = new Address();
             address.setAddressLine("hno 52");
             address.setCity("muka");
@@ -81,6 +83,9 @@ public class Bootstrap implements ApplicationRunner {
             user1.setFirstName("Daminee");
             user1.setLastName("saini");
             user1.setEmail("damineesaini11@gmail.com");
+            user1.setActive(true);
+            user1.setNotLocked(true);
+            user1.setNotDeleted(true);
             user1.setPassword(bCryptPasswordEncoder.encode("9090@ds#DL"));
             ArrayList<Role> roles = new ArrayList<>();
             Role role2 = new Role();
@@ -105,6 +110,9 @@ public class Bootstrap implements ApplicationRunner {
             user2.addAddresses(address2);
             user2.setFirstName("Deepak");
             user2.setLastName("saini");
+            user2.setActive(true);
+            user2.setNotLocked(true);
+            user2.setNotDeleted(true);
             user2.setEmail("alfaaz.contact@gmail.com");
             user2.setPassword(bCryptPasswordEncoder.encode("9090@ds"));
             ArrayList<Role> roles1 = new ArrayList<>();

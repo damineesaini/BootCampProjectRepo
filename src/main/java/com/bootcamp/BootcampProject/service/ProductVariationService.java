@@ -1,7 +1,6 @@
 package com.bootcamp.BootcampProject.service;
 
 import com.bootcamp.BootcampProject.dto.request.ProductVariationDto;
-import com.bootcamp.BootcampProject.entity.image.Image;
 import com.bootcamp.BootcampProject.entity.product.CategoryMetadataField;
 import com.bootcamp.BootcampProject.entity.product.CategoryMetadataFieldValues;
 import com.bootcamp.BootcampProject.entity.product.Product;
@@ -21,14 +20,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 @Service
@@ -100,91 +92,91 @@ System.out.println(dbValues);
         }
     }
 
-    public String addNewProductVariations(ProductVariationDto productVariationDto, UUID prodId, Seller seller, MultipartFile file) throws Exception, DoesNotExistException, InactiveException, ProductNotFoundException, AlreadyExistException {
-        if (productRepository.findById(prodId).isPresent()){
-            Product product = productRepository.findById(prodId).get();
-            if (seller.equals(product.getSellerUserId())){
-                if(product.isActive() && !product.isDelete()){
-                    ProductVariation productVariation = new ProductVariation();
-                    productVariation.setProductId(product);
-                    productVariation.setPrice(productVariationDto.getPrice());
-                    productVariation.setQuantityAvailable(productVariationDto.getQuantityAvailable());
-                    UUID categoryId = product.getCategoryId().getId();
-                    System.out.println(categoryId);
-                    CategoryMetadataField fieldId;
-                    System.out.println(productVariationDto.getMetadataFieldValuesMap());
-                    Map<String, String> metadata = productVariationDto.getMetadataFieldValuesMap();
-                    System.out.println(metadata);
-                    List<String> keys = new ArrayList<>(metadata.keySet());
-                    for (String field:keys) {
-                        fieldId = categoryMetadataFieldRepository.findIdByName(field);
-                        if (fieldId != null) {
-                            List<CategoryMetadataFieldValues> dbValues = categoryMetadataFieldValuesRepository.findByCategoryIdAndCategoryMetadataFieldId(categoryId, fieldId.getId());
-                            System.out.println(dbValues);
-                            System.out.println(metadata.get(field));
-                            Optional<CategoryMetadataFieldValues> existMetadataValues = dbValues.stream().filter(s->s.getValues().equals(metadata.get(field))).findFirst();
-                            if (existMetadataValues.isPresent()) {
-                                throw new DoesNotExistException("the value entered for field " + field + " does not exist");
-                            }
-                        } else {
-                            throw new DoesNotExistException("the field" + field + "entered does not exist");
-                        }
-                    }
-
-                    productVariation.setProductMetadata(productVariationDto.getMetadataFieldValuesMap());
-                    productVariation.setActive(true);
-                    productVariationRepository.save(productVariation);
-                    if (file.isEmpty()) {
-                        throw new IOException("Upload Image");
-                    }
-                    UUID prodVarId = productVariation.getId();
-                    String message=null;
-                    try {
-                        Path fileStorageLocation = Paths.get(FOLDER_PATH).toAbsolutePath().normalize();
-                        System.out.println(fileStorageLocation);
-                        String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
-                        System.out.println(originalFileName);
-                        String fileName = "";
-                        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-                        System.out.println(extension);
-
-                        if (extension.equals(".jpeg")||extension.equals(".jpg")||extension.equals(".png")){
-                            fileName= prodVarId + extension;
-                            System.out.println(fileName);
-                            System.out.println(fileStorageLocation.resolve("/products/variations"));
-                            Path targetLocation = fileStorageLocation.resolve(fileName);
-                            System.out.println(targetLocation);
-                            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-
-                            Image image =new Image(file.getOriginalFilename(),file.getContentType(),file.getBytes());
-                            image.setFilename(prodVarId.toString()+extension);
-                            image.setPath(targetLocation.toString());
-                            image.setCreateDate(new Date());
-                            image.setUserId(seller.getUserId());
-
-                            message = imageService.saveProductVariationImage(image,prodVarId);
-                        }
-                        else {
-                            throw new Exception("Invalid file format. Kindly use jpg,jpeg and png");
-                        }
-                    }catch (IOException e){
-                        e.printStackTrace();
-                        throw e;
-                    }
-                    return "variation saved. " + message;
-                }
-                else {
-                    throw new InactiveException("Product is either not active or deleted.");
-                }
-            }
-            else{
-                throw new InactiveException("accessing unauthorized product");
-            }
-        }
-        else {
-            throw new ProductNotFoundException("Incorrect Product Id");
-        }
-    }
+//    public String addNewProductVariations(ProductVariationDto productVariationDto, UUID prodId, Seller seller, MultipartFile file) throws Exception, DoesNotExistException, InactiveException, ProductNotFoundException, AlreadyExistException {
+//        if (productRepository.findById(prodId).isPresent()){
+//            Product product = productRepository.findById(prodId).get();
+//            if (seller.equals(product.getSellerUserId())){
+//                if(product.isActive() && !product.isDelete()){
+//                    ProductVariation productVariation = new ProductVariation();
+//                    productVariation.setProductId(product);
+//                    productVariation.setPrice(productVariationDto.getPrice());
+//                    productVariation.setQuantityAvailable(productVariationDto.getQuantityAvailable());
+//                    UUID categoryId = product.getCategoryId().getId();
+//                    System.out.println(categoryId);
+//                    CategoryMetadataField fieldId;
+//                    System.out.println(productVariationDto.getMetadataFieldValuesMap());
+//                    Map<String, String> metadata = productVariationDto.getMetadataFieldValuesMap();
+//                    System.out.println(metadata);
+//                    List<String> keys = new ArrayList<>(metadata.keySet());
+//                    for (String field:keys) {
+//                        fieldId = categoryMetadataFieldRepository.findIdByName(field);
+//                        if (fieldId != null) {
+//                            List<CategoryMetadataFieldValues> dbValues = categoryMetadataFieldValuesRepository.findByCategoryIdAndCategoryMetadataFieldId(categoryId, fieldId.getId());
+//                            System.out.println(dbValues);
+//                            System.out.println(metadata.get(field));
+//                            Optional<CategoryMetadataFieldValues> existMetadataValues = dbValues.stream().filter(s->s.getValues().equals(metadata.get(field))).findFirst();
+//                            if (existMetadataValues.isPresent()) {
+//                                throw new DoesNotExistException("the value entered for field " + field + " does not exist");
+//                            }
+//                        } else {
+//                            throw new DoesNotExistException("the field" + field + "entered does not exist");
+//                        }
+//                    }
+//
+//                    productVariation.setProductMetadata(productVariationDto.getMetadataFieldValuesMap());
+//                    productVariation.setActive(true);
+//                    productVariationRepository.save(productVariation);
+//                    if (file.isEmpty()) {
+//                        throw new IOException("Upload Image");
+//                    }
+//                    UUID prodVarId = productVariation.getId();
+//                    String message=null;
+//                    try {
+//                        Path fileStorageLocation = Paths.get(FOLDER_PATH).toAbsolutePath().normalize();
+//                        System.out.println(fileStorageLocation);
+//                        String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
+//                        System.out.println(originalFileName);
+//                        String fileName = "";
+//                        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+//                        System.out.println(extension);
+//
+//                        if (extension.equals(".jpeg")||extension.equals(".jpg")||extension.equals(".png")){
+//                            fileName= prodVarId + extension;
+//                            System.out.println(fileName);
+//                            System.out.println(fileStorageLocation.resolve("/products/variations"));
+//                            Path targetLocation = fileStorageLocation.resolve(fileName);
+//                            System.out.println(targetLocation);
+//                            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+//
+//                            Image image =new Image(file.getOriginalFilename(),file.getContentType(),file.getBytes());
+//                            image.setFilename(prodVarId.toString()+extension);
+//                            image.setPath(targetLocation.toString());
+//                            image.setCreateDate(new Date());
+//                            image.setUserId(seller.getUserId());
+//
+//                            message = imageService.saveProductVariationImage(image,prodVarId);
+//                        }
+//                        else {
+//                            throw new Exception("Invalid file format. Kindly use jpg,jpeg and png");
+//                        }
+//                    }catch (IOException e){
+//                        e.printStackTrace();
+//                        throw e;
+//                    }
+//                    return "variation saved. " + message;
+//                }
+//                else {
+//                    throw new InactiveException("Product is either not active or deleted.");
+//                }
+//            }
+//            else{
+//                throw new InactiveException("accessing unauthorized product");
+//            }
+//        }
+//        else {
+//            throw new ProductNotFoundException("Incorrect Product Id");
+//        }
+//    }
 
     public MappingJacksonValue viewProductVariationById(UUID variationId,Seller seller) throws  InactiveException, DoesNotExistException, ProductNotFoundException {
         if (productVariationRepository.findById(variationId).isPresent()){

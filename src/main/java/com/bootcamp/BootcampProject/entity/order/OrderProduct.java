@@ -1,17 +1,20 @@
 package com.bootcamp.BootcampProject.entity.order;
 
 import com.bootcamp.BootcampProject.entity.product.ProductVariation;
-import org.hibernate.annotations.Type;
+import com.bootcamp.BootcampProject.utility.HashMapConverter;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Map;
 import java.util.UUID;
 
 @Entity
 @Table(name = "order_product")
 public class OrderProduct {
     @Id
-    @GeneratedValue
-    @Type(type="uuid-char")
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
     private UUID id;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="order_id")
@@ -20,8 +23,9 @@ public class OrderProduct {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="product_variation_id")
     private ProductVariation productVariationId;
-    @Column(name = "product_variation_metadata")
-    private String productVariationMetadata;
+    @Convert(converter = HashMapConverter.class)
+    @Column(name = "product_variation_metadata",columnDefinition = "JSON")
+    private Map<String,String> productVariationMetadata;
 
     public UUID getId() {
         return id;
@@ -55,11 +59,11 @@ public class OrderProduct {
         this.productVariationId = productVariationId;
     }
 
-    public String getProductVariationMetadata() {
+    public Map<String,String> getProductVariationMetadata() {
         return productVariationMetadata;
     }
 
-    public void setProductVariationMetadata(String productVariationMetadata) {
+    public void setProductVariationMetadata(Map<String,String> productVariationMetadata) {
         this.productVariationMetadata = productVariationMetadata;
     }
 }

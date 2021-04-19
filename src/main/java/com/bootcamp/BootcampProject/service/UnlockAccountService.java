@@ -69,7 +69,7 @@ public class UnlockAccountService {
             }
             else {
                 User user = userRepository.findByEmail(unlockAccountToken.getUser().getEmail());
-                    user.setLocked(true);
+                    user.setNotLocked(true);
                     user.setLoginAttempts(0);
                     userRepository.save(user);
                     SimpleMailMessage message = new SimpleMailMessage();

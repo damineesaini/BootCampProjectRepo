@@ -2,6 +2,7 @@ package com.bootcamp.BootcampProject.entity.order;
 
 import com.bootcamp.BootcampProject.entity.product.ProductVariation;
 import com.bootcamp.BootcampProject.entity.user.Customer;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "cart")
+@JsonFilter("cartFilter")
 public class Cart {
     @Id
     @GeneratedValue

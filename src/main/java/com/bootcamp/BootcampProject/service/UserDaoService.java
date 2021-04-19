@@ -28,34 +28,13 @@ public class UserDaoService {
         }
     }
 
-    public static final int MAX_FAILED_ATTEMPTS = 3;
-
-    public void increaseFailedAttempts(User user) {
-        int newLoginAttempts = user.getLoginAttempts() + 1;
-        user.setLoginAttempts(newLoginAttempts);
-        userRepository.save(user);
-        userRepository.updateLoginAttempts(newLoginAttempts, user.getEmail());
-    }
-
-    public void resetFailedAttempts(String email) {
-        User user = userRepository.findByEmail(email);
-        user.setLoginAttempts(0);
-        userRepository.save(user);
-        userRepository.updateLoginAttempts(0, email);
-    }
-
-    public void lock(User user) {
-        user.setLocked(false);
-        userRepository.save(user);
-    }
-
     public void manageAttempts(String username) {
         User user = userRepository.findByEmail(username);
         if(user!=null) {
             System.out.println("inside if");
             if (user.getLoginAttempts() > 2) {
-                if(user.isLocked()){
-                    user.setLocked(false);
+                if(user.isNotLocked()){
+                    user.setNotLocked(false);
                     SimpleMailMessage mail = new SimpleMailMessage();
                     mail.setTo(user.getEmail());
                     mail.setSubject("Account locked");
